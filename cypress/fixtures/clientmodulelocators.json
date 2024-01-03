@@ -1,0 +1,251 @@
+{
+    "ActiveClientsMainPageTitle":"#client-lists > div > h2",
+    "ClientNameTitle":"div.main-content-inner2 > div > h1",
+    "TerminateButton":"div.main-content-inner2 > div > div > button",
+    "TerminationRequestModal":[
+        {
+            "modal":"div.opacity-100 > div.inline-block",
+            "modaltitle":"div.p-5 > div > h4",
+            "clientname":"div.p-5 > div > h5",
+            "ReasonForTerminationLabelandSelectMenu":"form > div.space-y-6 > div:nth-child(1)",
+            "RetentionEffortChecklistLabelandDescription":"form > div.space-y-6 > div:nth-child(2)",
+            "RetentionEffortChecklists":"form > div.space-y-6 > div:nth-child(3) > div",
+            "AdditionalNotesLabelandTextareafield":"form > div.space-y-6 > div:nth-child(4)",
+            "CancelButton":"form > div.space-y-6 > div:nth-child(5) > button:nth-child(1)",
+            "RequestForTerminationButton":"form > div.space-y-6 > div:nth-child(5) > button:nth-child(2)"
+        }
+    ],
+    "View_TerminationRequestModal":[
+        {
+            "modal":"div.opacity-100 > div.inline-block",
+            "modaltitle":"div.p-5 > div > h4",
+            "clientname":"div.p-5 > div > h5",
+            "ReasonForTerminationLabelandSelectMenu":"form > div.space-y-6 > div:nth-child(1)",
+            "RetentionEffortChecklistLabelandTheSelectedRetention":"form > div.space-y-6 > div:nth-child(2)",
+            "AdditionalNotesLabelandTheNotes":"form > div.space-y-6 > div:nth-child(3)",
+            "DenyButton":"form > div.space-y-6 > div:nth-child(4) > button:nth-child(1)",
+            "ApproveButton":"form > div.space-y-6 > div:nth-child(4) > button:nth-child(2)",
+            "LetTheRequestorKnowWhyAreYouDenyingTheRequestTEXT":"form > div.space-y-6 > h5",
+            "ReasonForDenyingLabelandTextarea":"form > div.space-y-6 > div:nth-child(2)",
+            "GobackButton":"form > div.space-y-6 > div:nth-child(3) > button:nth-child(1)",
+            "SubmitButton":"form > div.space-y-6 > div:nth-child(3) > button:nth-child(2)",
+            "YourTerminationRequestWasDeniedSection":"div.p-5 > div > div.bg-red-50"
+        }
+    ],
+    "ClientMainPageTab":[
+        {
+            "ClientDashboardTab":"nav[aria-label='Tabs'] > a:nth-child(1)",
+            "BillingTab":"nav[aria-label='Tabs'] > a:nth-child(2)",
+            "TasksTab":"nav[aria-label='Tabs'] > a:nth-child(3)"
+        }
+    ],
+    "ClientDashboardTabPage":[
+        {
+            "PageTabs":[
+                {
+                    "ProfileTab":"div.tablinks > a:nth-child(1)",
+                    "OnboardingTab":"div.tablinks > a:nth-child(2)",
+                    "FilesTab":"div.tablinks > a:nth-child(3)",
+                    "MockupTab":"div.tablinks > a:nth-child(4)",
+                    "ProposalTab":"div.tablinks > a:nth-child(5)"
+                }
+            ],
+            "ProfileTabpage":[
+                {
+                    "OverviewTitle":"div.flex > div.justify-between > h4",
+                    "KebabMenuButton":"div.text-left > div > button",
+                    "PhotoProfileSection":"div.col-span-2 > div.relative",
+                    "ClientBasicContactInformationSection":[
+                        {
+                            "ContactNameLabel":"div > dl > dt:nth-child(1)",
+                            "ContactName":"div > dl > dd:nth-child(2)",
+                            "ContactNumberLabel":"div > dl > dt:nth-child(3)",
+                            "ContactNumber":"div > dl > dd:nth-child(4)",
+                            "AddressLabel":"div > dl > dt:nth-child(5)",
+                            "Address":"div > dl > dd:nth-child(6)",
+                            "ClientEmailAddressLabel":"div > dl > dt:nth-child(7)",
+                            "ClientEmailAddress":"div > dl > dd:nth-child(8)",
+                            "SellerInteractiveEmailAddressLabel":"div > dl > dt:nth-child(9)",
+                            "SellerInteractiveEmailAddress":"div > dl > dd:nth-child(10)"
+                        }
+                    ]
+                },
+                {
+                    "EditProfileSubPage":[
+                        {
+                            "ClientLabelandInputfield":"form > div > div:nth-child(1)",
+                            "UpdateButton":"div.space-x-4 > button"
+                        }
+                    ],
+                    "UpdateDefaultContactPasswordModal":[
+                        {
+                            "modal":"div.opacity-100 > div.inline-block",
+                            "modaltitle":"div > h3",
+                            "NewPasswordLabelandInputfield":"form > div > div:nth-child(1)",
+                            "ConfirmNewPasswordLabelandInputfield":"form > div > div:nth-child(2)",
+                            "CancelButton":"div.space-x-4 > button:nth-child(1)",
+                            "ResetButton":"div.space-x-4 > button:nth-child(2)"
+                        }
+                    ],
+                    "UpdateDefaultContactDetailsModal":[
+                        {
+                            "modal":"div.opacity-100 > div.inline-block",
+                            "modaltitle":"div > h3",
+                            "FirstNameLabelandInputfield":"form > div > div:nth-child(1)",
+                            "LastNameLabelandInputfield":"form > div > div:nth-child(2)",
+                            "EmailLabelandInputfield":"form > div > div:nth-child(3)",
+                            "CancelButton":"div.space-x-4 > button:nth-child(1)",
+                            "UpdateButton":"div.space-x-4 > button:nth-child(2)"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "BillingTabPage":[
+        {
+            "PageTabs":[
+                {
+                    "SubscriptionsTab":"div.tablinks > a:nth-child(1)",
+                    "UpsellsTab":"div.tablinks > a:nth-child(2)",
+                    "PaidReviewsTab":"div.tablinks > a:nth-child(3)",
+                    "CreditNotesTab":"div.tablinks > a:nth-child(4)",
+                    "InvoiceHistoryTab":"div.tablinks > a:nth-child(5)",
+                    "TransactionsTab":"div.tablinks > a:nth-child(6)",
+                    "CommissionsTab":"div.tablinks > a:nth-child(7)",
+                    "CommErrors":"div.tablinks > a:nth-child(8)"
+                }
+            ],
+            "SubscriptionTabpage":[
+                {
+                    "OverviewTitle":"div.client-content > div > h4.text-2xl",
+                    "KebabMenu":"div.z-2 > div > button",
+                    "ClientBasicContactInformationSection":[
+                        {
+                            "ClientLabel":"div > dl:nth-child(2) > dt:nth-child(1)",
+                            "ClientFirstName":"div > dl:nth-child(2) > dd:nth-child(2)",
+                            "SubscriptionNumberLabel":"div > dl:nth-child(2) > dt:nth-child(3)",
+                            "SubscriptionNumber":"div > dl:nth-child(2) > dd:nth-child(4)",
+                            "StatusLabel":"div > dl:nth-child(2) > dt:nth-child(5)",
+                            "StatusElements":"div > dl:nth-child(2) > dd:nth-child(6)",
+                            "BillingAddressLabel":"div > dl:nth-child(2) > dt:nth-child(7)",
+                            "BillingAddress":"div > dl:nth-child(2) > dd:nth-child(8)",
+                            "ActivationDateLabel":"div > dl:nth-child(2) > dt:nth-child(9)",
+                            "ActivationDate":"div > dl:nth-child(2) > dd:nth-child(10)",
+                            "StartDateLabel":"div > dl:nth-child(2) > dt:nth-child(11)",
+                            "StartDate":"div > dl:nth-child(2) > dd:nth-child(12)",
+                            "ValidUntilDateLabel":"div > dl:nth-child(2) > dt:nth-child(13)",
+                            "ValidUntil":"div > dl:nth-child(2) > dd:nth-child(14)"
+                        }
+                    ],
+                    "ChargeOneTimeAddonModal":[
+                        {
+                            "modal":"div.opacity-100 > div.inline-block",
+                            "modaltitle":"div.px-4 > h3",
+                            "Addon1labelandDeletebutton":"form > div > div.justify-between",
+                            "AddonLabelandSelectMenu":"form > div > div:nth-child(2)",
+                            "TypeLabelandOne_Time":"form > div > div:nth-child(3)",
+                            "QtyLabelandInputfield":"form > div > div:nth-child(4)",
+                            "PriceLabelandInputfield":"form > div > div:nth-child(5)",
+                            "TotalLabelandValue":"form > div > div:nth-child(6)",
+                            "ItemDescriptiontextareafield":"form > div > div:nth-child(7)",
+                            "AddonButton":"form > div:nth-child(2) > button",
+                            "CancelButton":"div.space-x-4 > button:nth-child(1)",
+                            "ApplyButton":"div.space-x-4 > button:nth-child(2)"
+                        }
+                    ]
+                }
+            ],
+            "UpsellsTabpage":[
+                {
+                    "UpsellsTitle":"div > h2",
+                    "CreateUpsellButton":"div.flex > div.items-center > button",
+                    "CreateUpsellModal":[
+                        {
+                            "modal":"div.opacity-100 > div.transition-all",
+                            "modaltitle":"div > h3",
+                            "UpsellitemAndSelectDropdownmenu":"form > div.mt-6 > div > div.text-sm",
+                            "QuantitylabelAndInputfield":"form > div.mt-6 > div > div:nth-child(2)",
+                            "UnitPricelabelAndInputfield":"form > div.mt-6 > div > div:nth-child(3)",
+                            "WaiveUpsellFeelabelAndSlidebutton":"form > div.mt-6 > div > div:nth-child(4)",
+                            "UpsellDescriptionlabelAndTextareafield":"form > div.mt-6 > div > div:nth-child(5)",
+                            "ServiceASINTitle":"form > div.text-gray-800",
+                            "ASIN1defaultLabelandInputfield":"form > div.text-gray-800 > div > div",
+                            "AddServiceAsinButton":"div.mt-6 > button",
+                            "NoteTextareafieldandLabel":"form > div.mt-12",
+                            "SaveasDraftButton":"form > div.p-8 > button.text-blue-500",
+                            "SubmitButton":"form > div.p-8 > button.text-white",
+                            "UpsellItemIsRequiredErrorText":"form > div.mt-6 > div > div.text-sm > div",
+                            "DescriptionIsRequiredErrorText":"form > div.mt-6 > div > div:nth-child(5) > div",
+                            "ServiceASINItemisrequiredErrorText":"form > div.text-gray-800 > div > div > div:nth-child(2) > div",
+                            "SelectAvailableASINstoAddButton":"div.w-full > div.relative > button",
+                            "ReviewFeeLabelandInputfield":"form > div.mt-6 > div > div:nth-child(2)",
+                            "ProcessingFeeLabelandInputfield":"form > div.mt-6 > div > div:nth-child(3)",
+                            "TaxLabelandInputfield":"form > div.mt-6 > div > div:nth-child(4)",
+                            "EstimateCompletionDateLabelandInputfield":"form > div.mt-6 > div > div:nth-child(5)",
+                            "PaidReviewProgramUpsellItemDescriptionLabelandTextareafield":"form > div.mt-6 > div > div:nth-child(7)",
+                            "PaidReviewProgramQuantityLabelandInputfield":"form > div:nth-child(2) > div > div:nth-child(1) > div:nth-child(3)",
+                            "PaidReviewProgramUnitPriceLabelandInputfield":"form > div:nth-child(2) > div > div:nth-child(1) > div:nth-child(4)",
+                            "PaidReviewProgramTotalProductCostLabelandDefaultValue":"form > div:nth-child(2) > div > div:nth-child(1) > div:nth-child(5)",
+                            "PaidReviewProgramTotalReviewFeeLabelandDefaultValue":"form > div:nth-child(2) > div > div:nth-child(1) > div:nth-child(6)",
+                            "PaidReviewProgramTotalProcessingFeeLabelandDefaultValue":"form > div:nth-child(2) > div > div:nth-child(1) > div:nth-child(7)",
+                            "PaidReviewProgramTotalTaxLabelandDefaultValue":"form > div:nth-child(2) > div > div:nth-child(1) > div:nth-child(8)",
+                            "YourUpsellRequestWasRejectedSection":"div.pt-0 > div.mb-4",
+                            "StatusLabelandstatus":"div.pt-0 > div.mt-3 > div > div:nth-child(7)",
+                            "PaidReviewProgramADDASINsToReviewButton":"form > div:nth-child(2) > div > div > button"
+                        }
+                    ],
+                    "AreyousureyouwanttoresendthebillingsummaryinvoiceemailtotheclientModal":[
+                        {
+                            "modal":"div.min-h-screen > div.max-w-xl",
+                            "modaltitle":"div.min-h-screen > div.max-w-xl > h3",
+                            "ClientEmailAddressText":"div.min-h-screen > div.max-w-xl > div.my-8 > div",
+                            "CancelButton":"div.mt-4 > button:nth-child(1)",
+                            "ResendButton":"div.mt-4 > button:nth-child(2)"
+                        }
+                    ]
+                }
+            ],
+            "PaidReviewsTabpage":[
+                {
+
+                }
+            ],
+            "CreditNotesTabpage":[ 
+                {
+                    "CreditNotesTitle":"div > h2",
+                    "CreateCreditButton":"div.items-center > button",
+                    "CreditNotesModal":[
+                        {
+                            "modal":"div.opacity-100 > div.inline-block",
+                            "modaltitle":"div > h3",
+                            "CreditNoteDetailsLabel":"form > div.flex > p",
+                            "AmountLabelandValue":"form > div > div:nth-child(4)",
+                            "ZohoCreditNoteLabelandCNNumber":"form > div > div:nth-child(5)",
+                            "CreditsappliedtoinvoicesLabel":"form > div > div > div.flex-col > label",
+                            "RemainingCreditsLabelandAmount":"div.pt-8 > div:nth-child(1)",
+                            "CreditsAppliedLabelandAmount":"div.pt-8 > div:nth-child(2)",
+                            "CreditNoteNameLabelandInputfield":"form > div > div:nth-child(1)",
+                            "DescriptionLabelandTextareafield":"form > div > div:nth-child(2)",
+                            "RequesterNoteLabelandTextareafield":"form > div > div:nth-child(3)",
+                            "CreditRequestAmountLabel_DollarSign_Inputfield":"form > div > div:nth-child(4)",
+                            "SaveasDraftButton":"form > div > div:nth-child(5) > button:nth-child(1)",
+                            "SubmitButton":"form > div > div:nth-child(5) > button:nth-child(2)"
+                        }
+                    ],
+                    "CancelCreditNoteModal":[
+                        {
+                            "modal":"div.min-h-screen > div.inline-block",
+                            "modaltitle":"div > h3",
+                            "creditnotenamelabelandThecreditnotename":"div.my-8 > div.text-gray-500 > div",
+                            "amountlabelanditsamount":"div.my-8 > div.text-gray-500 > div > span:nth-child(2)",
+                            "nobutton":"div.my-8 > div.mt-4 > button:nth-child(1)",
+                            "yesbutton":"div.my-8 > div.mt-4 > button:nth-child(2)"
+                        }
+                    ]
+                }
+                
+            ]   
+        }
+    ]
+}
