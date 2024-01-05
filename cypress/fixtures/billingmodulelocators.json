@@ -134,7 +134,29 @@
     ],
     "UpsellItemsPage":[
         {
-
+            "pageTitle":"div > h1",
+            "AddButton":"div.pt-5 > button:nth-child(2)",
+            "CreateUpsellItemModal":[
+                {
+                    "modal":"div.opacity-100 > div.inline-block",
+                    "modaltitle":"div > h3",
+                    "InvoiceItemNameLabelandInputfield":"form > div:nth-child(1) > div:nth-child(1)",
+                    "InvoiceItemCodeLabelandInputfield":"form > div > div:nth-child(2)",
+                    "ItemDescriptionLabelandTextareafield":"form > div > div:nth-child(3)",
+                    "OneTimeFeeLabelandInputfield":"form > div > div:nth-child(4)",
+                    "CancelButton":"form > div:nth-child(2) > div > button:nth-child(1)",
+                    "SaveButton":"form > div:nth-child(2) > div > button:nth-child(2)"
+                }
+            ],
+            "ConfirmDeleteItemModal":[
+                {
+                    "modal":"div.min-h-screen > div.inline-block",
+                    "modaltitle":"div > h3",
+                    "AreYouSureYouWantToDeleteThisAddonupsellitemTEXT":"div.min-h-screen > div.inline-block > div > div",
+                    "NoButton":"div.min-h-screen > div.inline-block > div:nth-child(3) > button:nth-child(1)",
+                    "YesButton":"div.min-h-screen > div.inline-block > div:nth-child(3) > button:nth-child(2)"
+                }
+            ]
         }
     ],
     "TaxesPage":[

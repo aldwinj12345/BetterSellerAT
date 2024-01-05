@@ -21223,6 +21223,3517 @@ describe('Login Module Test Suite',()=>{
         .should('not.exist')
       
     })
+    it("Testcase ID: CATM0008 - Add/Edit/Delete task to Onboarding Task for the New Onboarding Template",()=>{
+
+
+      //Login using account specialist
+      cy.userlogin(loginmodule.EmailAddressInputfield, loginmodule.PasswordInputfield, loginmodule.SigninButton, testdata.userAccounts[0].accountspecialist1, testdata.userAccounts[0].accountspecialistandprojectmanagerpassword)
+
+      //Click the Admin Navigation Module
+      cy.get(modulebutton.AdminModuleButton)
+        .click()
+        .wait(2000)
+        
+      //Click the Task Management link text folder
+      cy.get(linktextfolder.AdminModule[0].TaskManagement)
+        .click()
+        .wait(2000)
+      
+      //verify Add button - if found click
+      cy.get(adminmodulelocator.TaskManageementFolder[0].AddButton)
+        .should('exist')
+        .and('not.be.disabled')
+        .and('have.text', 'Add')
+        .and('have.css', 'color', 'rgb(0, 47, 93)') //text color
+        .and('have.css', 'border-color', 'rgb(0, 47, 93)')
+        .and('have.css', 'border-radius', '40px')
+        .click()
+        .wait(2000)
+
+      //verify Task List Creation Modal popup open
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].modal)
+        .should('exist')
+
+      //Click the Next Button
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].NextButton)
+        .click()
+        .wait(2000)
+
+      //////// CREATE NEW ONBOARDING TEMPLATE STARTS HERE ///////////
+
+      //Now Enter Template Name
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].TemplateNameLabelandInputfield)
+        .find(' > input[name="name"]')
+        .clear()
+        .type('New Test Onboarding Template')
+        .wait(600)
+        .should('have.value', 'New Test Onboarding Template')
+
+      //Select New in Partner Type
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].PartnerTypeLabelandDropdownMenu)
+        .find(' > div > select[name="partnerType"]')
+        .select('new')
+        .wait(600)
+
+      //verify that the selected option goes on top
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].PartnerTypeLabelandDropdownMenu)
+        .find('select option:selected')
+        .should('have.text', 'New')
+
+      //Select Service Category Full Account Management
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].WhichServiceCategoryWIllThisBeUsedLabelandDropdownMenu)
+        .find(' > select[name="partnerService"]')
+        .select('Full Account Management')
+        .wait(600)
+
+      //verify the selected service category goes on top
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].WhichServiceCategoryWIllThisBeUsedLabelandDropdownMenu)
+        .find('select option:selected')
+        .should('have.text', 'Full Account Management')
+
+      ///////// CREATE NEW ONBOARDING TEMPLATE ENDS HERE ///////////
+
+      //Click Create Button
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].CreateButton)
+        .click()
+        .wait(2000)
+
+      //verify alert-success modal popup
+      cy.get('div.overflow-y-auto > div.min-h-full')
+        .should('exist')
+        .within(()=>{
+          //assert check logo
+          cy.get(' > div > div > svg')
+            .should('exist')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+          //assert message
+          cy.get(' > div > div')
+            .should('exist')
+            .and('have.text', 'Template has been created.')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+            .and('have.css', 'font-weight', '400')  //font bold
+        })
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+        
+      //////// TASK MANAGEMENT > NEW > ONBOARDING TABLE LIST ASSERTIONS STARTS HERE ////////////
+
+      //verify first column Names
+      const columnNames = [
+        'Template Name',
+        'Partner Type',
+        'Service Type',
+        'Last Updated',
+        'Updated By',
+        'Action'
+      ];
+      cy.get('table > thead > tr > th').each(($column, index)=>{
+        cy.wrap($column)
+          .should('exist')
+          .and('have.text',columnNames[index])
+        cy.log(columnNames[index])
+      })
+
+      //Then verify row 1 each column
+      cy.get('table > tbody > tr:first-child').within(()=>{
+        //assert Template Name
+        TaskManagementTableList.assertColumn1TemplateName(' > td:nth-child(1) > a', 'New Test Onboarding Template')
+        //assert Partner Type
+        TaskManagementTableList.assertColumn2PartnerType(' > td:nth-child(2)', 'new')
+        //assert Service Type
+        TaskManagementTableList.assertColumn3ServiceType(' > td:nth-child(3)', 'Full Account Management')
+        //assert Last Updated
+        TaskManagementTableList.assertColumn4LastUpdated(' > td:nth-child(4)', DateTodayIs.TodayDateMMDDYYYY_MonthisinWholeWordandDayiswithTH())
+        //assert Updated By
+        TaskManagementTableList.assertColumn5UpdatedBy(' > td:nth-child(5) > div', 'LP', 'Logan Paul')
+        //aasert Action:Edit
+        TaskManagementTableList.assertColumn6Action(' > td:nth-child(6) > a', 'not.be.disabled', 'Edit')
+      })
+
+      //////// TASK MANAGEMENT > NEW > ONBOARDING TABLE LIST ASSERTIONS ENDS HERE ////////////
+        
+      //CLick the Action Edit button
+      cy.get('table > tbody > tr:first-child > td:nth-child(6) > a')
+        .click()
+        .wait(3000)
+
+      //Click the Add button beside the title 'Tasks'
+      cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+        .find(' > button')
+        .click()
+        .wait(1000)
+
+      //Enter task Name
+      cy.get('input[name="title"]')
+        .should('exist')
+        .clear()
+        .type('Adding new task One')
+        .wait(700)
+        .should('have.value', 'Adding new task One')
+
+      //Enter Task Description
+      cy.get('input[name="description"]')
+        .should('exist')
+        .clear()
+        .type('This description is just for testing purposes only')
+        .wait(700)
+        .should('have.value', 'This description is just for testing purposes only')
+
+      //Click the check/submit/save button
+      cy.get('div.grid > div > button:nth-child(1)')
+        .should('exist')
+        .click()
+        .wait(3000)
+
+      //verify alert-success modal popup
+      cy.get('div.overflow-y-auto > div.min-h-full')
+        .should('exist')
+        .within(()=>{
+          //assert check logo
+          cy.get(' > div > div > svg')
+            .should('exist')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+          //assert message
+          cy.get(' > div > div')
+            .should('exist')
+            .and('have.text', 'Template has been created.')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+            .and('have.css', 'font-weight', '400')  //font bold
+        })
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+
+      //verify in the Onboarding task the total task created under it
+      cy.get('div.space-y-8 > div:nth-child(2) > div > div > div')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > p > span:nth-child(2)')
+            .should('exist')
+            .and('have.text', '1 task')
+            .and('have.css', 'color', 'rgb(148, 148, 148)') //text color
+            .and('have.css', 'font-size', '11px')
+            .and('have.css', 'font-weight', '400')
+        })
+
+      //Click the '>' Onboarding tasks
+      cy.get('div.space-y-8 > div:nth-child(2) > div > div > div')
+        .find(' > div > svg')
+        .click()
+        .wait(3000)
+
+      //verify there would be Description column name
+      cy.get('div.font-inter > p:nth-child(2)')
+        .should('exist')
+        .and('have.text', 'Description')
+      //verify there would be Actions column name
+      cy.get('div.font-inter > p:nth-child(3)')
+        .should('exist')
+        .and('have.text', 'Actions')
+     
+      //verify the task name you just entered and the task description 
+      cy.get('div.bg-white > div.text-13 > div > div')
+        .should('exist')
+        .within(()=>{
+          //assert Task Name
+          cy.get(' > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Adding new task One')
+          //assert Task description
+          cy.get(' > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This description is just for testing purposes only')
+        })
+
+      //verify the edit and delete buttons
+      cy.get('div.bg-white > div.text-13 > div > div > div')
+        .should('exist')
+        .within(()=>{
+          //assert edit button
+          cy.get(' > button:nth-child(1)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'background-color', 'rgb(0, 47, 93)')
+            .and('have.css', 'border-radius', '10px')
+            .find('svg').should('have.css', 'color', 'rgb(255, 255, 255)')
+          //assert delete button
+          cy.get(' > button:nth-child(2)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'background-color', 'rgb(255, 255, 255)')
+            .and('have.css', 'border-color', 'rgb(148, 148, 148)')
+            .and('have.css', 'border-radius', '10px')
+            .find('svg').should('have.css', 'color', 'rgb(148, 148, 148)')
+        })
+
+      //Now I am going to click the edit button
+      cy.get('div.bg-white > div.text-13 > div > div > div')
+        .should('exist')
+        .within(()=>{
+          //click edit button
+          cy.get(' > button:nth-child(1)')
+            .click()
+            .wait(1000)
+        })
+
+      //as expected the Task name, description name is now editable
+      cy.get('form > div.py-4 > div')
+        .should('exist')
+        .within(()=>{
+          //assert Task name
+          cy.get(' > div:nth-child(1)')
+            .should('exist')
+            .find('input[name="title"]').and('not.be.disabled').and('have.value', 'Adding new task One')
+          //assert task description
+          cy.get(' > div:nth-child(2)')
+            .should('exist')
+            .find('input[name="description"]').and('not.be.disabled').and('have.value', 'This description is just for testing purposes only')
+        })
+
+      //EDIT TASK NAME AND TASK DESCRIPTION
+      cy.get('form > div.py-4 > div')
+        .should('exist')
+        .within(()=>{
+          //edit Task name
+          cy.get(' > div:nth-child(1)')
+            .find('input[name="title"]')
+            .clear()
+            .type('New Task Test Name')
+            .wait(700)
+            .should('have.value', 'New Task Test Name')
+          //assert task description
+          cy.get(' > div:nth-child(2)')
+            .find('input[name="description"]')
+            .clear()
+            .type('This is a New Task Test Description')
+            .wait(700)
+            .should('have.value', 'This is a New Task Test Description')
+        })
+
+      //Click the check/save/submit button
+      cy.get('form > div.py-4 > div > div:nth-child(3) > button:nth-child(1)')
+        .should('exist')
+        .click()
+        .wait(3000)
+        
+      //verify alert-success modal popup
+      cy.get('div.overflow-y-auto > div.min-h-full')
+        .should('exist')
+        .within(()=>{
+          //assert check logo
+          cy.get(' > div > div > svg')
+            .should('exist')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+          //assert message
+          cy.get(' > div > div')
+            .should('exist')
+            .and('have.text', 'Template has been successfully updated.')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+            .and('have.css', 'font-weight', '400')  //font bold
+        })
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //Now verify the new task name and new task description
+      cy.get('div.bg-white > div.text-13 > div > div')
+        .should('exist')
+        .within(()=>{
+          //assert Task Name
+          cy.get(' > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'New Task Test Name')
+          //assert Task description
+          cy.get(' > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This is a New Task Test Description')
+        })
+
+      //Now delete the task
+      cy.get('div.bg-white > div.text-13 > div > div')
+        .within(()=>{
+          cy.get(' > div > button:nth-child(2)')
+            .click()
+            .wait(3000)
+        })
+
+      //verify alert-success modal popup
+      cy.get('div.overflow-y-auto > div.min-h-full')
+        .should('exist')
+        .within(()=>{
+          //assert check logo
+          cy.get(' > div > div > svg')
+            .should('exist')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+          //assert message
+          cy.get(' > div > div')
+            .should('exist')
+            .and('have.text', 'Template has now been deleted from the system')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+            .and('have.css', 'font-weight', '400')  //font bold
+        })
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //now verify the total count of the added task in the onboarding task should not be visible
+      cy.get('div.space-y-8 > div:nth-child(2) > div > div > div')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > p > span:nth-child(2)')
+            .should('not.exist')
+        })
+
+      //verify there'll be no Task Name, Task Description (but instead no items)
+      cy.get('div.bg-white > div.text-13 > div > div')
+        .should('not.exist')
+
+      //verify there would be Description column name
+      cy.get('div.font-inter > p:nth-child(2)')
+        .should('exist')
+        .and('have.text', 'Description')
+      //verify there would be Actions column name
+      cy.get('div.font-inter > p:nth-child(3)')
+        .should('exist')
+        .and('have.text', 'Actions')
+
+    })
+    it("Testcase ID: CATM0009 - Add/Edit/Delete task to each Recurring Task for the New Recurring Template",()=>{
+
+
+      //Login using account specialist
+      cy.userlogin(loginmodule.EmailAddressInputfield, loginmodule.PasswordInputfield, loginmodule.SigninButton, testdata.userAccounts[0].accountspecialist1, testdata.userAccounts[0].accountspecialistandprojectmanagerpassword)
+
+      //Click the Admin Navigation Module
+      cy.get(modulebutton.AdminModuleButton)
+        .click()
+        .wait(2000)
+        
+      //Click the Task Management link text folder
+      cy.get(linktextfolder.AdminModule[0].TaskManagement)
+        .click()
+        .wait(2000)
+        
+      //verify Add button - if found click
+      cy.get(adminmodulelocator.TaskManageementFolder[0].AddButton)
+        .should('exist')
+        .and('not.be.disabled')
+        .and('have.text', 'Add')
+        .and('have.css', 'color', 'rgb(0, 47, 93)') //text color
+        .and('have.css', 'border-color', 'rgb(0, 47, 93)')
+        .and('have.css', 'border-radius', '40px')
+        .click()
+        .wait(2000)
+
+      //verify Task List Creation Modal popup open
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].modal)
+        .should('exist')
+
+      //Select Recurring Template
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].RecurringTemplate)
+        .click()
+        .wait(1000)
+        .should('have.css', 'border-color', 'rgb(24, 121, 216)') // the entire recurring template has blue border color signify it is seleected
+        .find(' > div > div').should('have.css', 'background-color', 'rgb(24, 121, 216)') //blue dot signify it is selected
+    
+      //Click the Next Button
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].NextButton)
+        .click()
+        .wait(2000)
+
+      //verify the Task List Creation Modal should remain open
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].modal)
+        .should('exist')
+
+      //////// CREATE NEW RECURRING TASKS STARTS HERE ///////////
+
+      //Now Enter Template Name
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].TemplateNameLabelandInputfield)
+        .find(' > input[name="name"]')
+        .clear()
+        .type('New Test Recurring Template')
+        .wait(600)
+        .should('have.value', 'New Test Recurring Template')
+
+      //Select New in Partner Type
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].PartnerTypeLabelandDropdownMenu)
+        .find(' > div > select[name="partnerType"]')
+        .select('new')
+        .wait(600)
+
+      //verify that the selected option goes on top
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].PartnerTypeLabelandDropdownMenu)
+        .find('select option:selected')
+        .should('have.text', 'New')
+
+      //Select Service Category Full Account Management
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].WhichServiceCategoryWIllThisBeUsedLabelandDropdownMenu)
+        .find(' > select[name="partnerService"]')
+        .select('Full Account Management')
+        .wait(600)
+
+      //verify the selected service category goes on top
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].WhichServiceCategoryWIllThisBeUsedLabelandDropdownMenu)
+        .find('select option:selected')
+        .should('have.text', 'Full Account Management')
+
+      ///////// CREATE NEW RECURRING TASKS ENDS HERE ///////////
+       
+      //Click Create Button
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].CreateButton)
+        .click()
+        .wait(2000) 
+
+      //verify alert-success modal popup
+      cy.get('div.overflow-y-auto > div.min-h-full')
+        .should('exist')
+        .within(()=>{
+          //assert check logo
+          cy.get(' > div > div > svg')
+            .should('exist')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+          //assert message
+          cy.get(' > div > div')
+            .should('exist')
+            .and('have.text', 'Template has been created.')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+            .and('have.css', 'font-weight', '400')  //font bold
+        })
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+        
+      //Go to New > Recurring Tab
+      //verify Recurring Tab and click when found
+      cy.get(adminmodulelocator.TaskManageementFolder[0].pageSubTab[0].RecurringTab)
+        .click()
+        .wait(3000)
+
+      //verify expected url destination
+      cy.url().should('contain', 'recurring')
+       
+      //////// TASK MANAGEMENT > NEW > RECURRING TABLE LIST ASSERTIONS STARTS HERE ////////////
+
+      //verify first column Names
+      const columnNames = [
+        'Template Name',
+        'Partner Type',
+        'Service Type',
+        'Last Updated',
+        'Updated By',
+        'Action'
+      ];
+      cy.get('table > thead > tr > th').each(($column, index)=>{
+        cy.wrap($column)
+          .should('exist')
+          .and('have.text',columnNames[index])
+        cy.log(columnNames[index])
+      })
+      
+      //Then verify row 1 each column
+      cy.get('table > tbody > tr:first-child').within(()=>{
+        //assert Template Name
+        TaskManagementTableList.assertColumn1TemplateName(' > td:nth-child(1) > a', 'New Test Recurring Template')
+        //assert Partner Type
+        TaskManagementTableList.assertColumn2PartnerType(' > td:nth-child(2)', 'new')
+        //assert Service Type
+        TaskManagementTableList.assertColumn3ServiceType(' > td:nth-child(3)', 'Full Account Management')
+        //assert Last Updated
+        TaskManagementTableList.assertColumn4LastUpdated(' > td:nth-child(4)', DateTodayIs.TodayDateMMDDYYYY_MonthisinWholeWordandDayiswithTH())
+        //assert Updated By
+        TaskManagementTableList.assertColumn5UpdatedBy(' > td:nth-child(5) > div', 'LP', 'Logan Paul')
+        //aasert Action:Edit
+        TaskManagementTableList.assertColumn6Action(' > td:nth-child(6) > a', 'not.be.disabled', 'Edit') 
+      }) 
+
+      //////// TASK MANAGEMENT > NEW > RECURRING TABLE LIST ASSERTIONS ENDS HERE ////////////
+        
+      //Click the Edit button
+      cy.get('table > tbody > tr:first-child > td:nth-child(6) > a')
+        .click()
+        .wait(3000)
+
+      //Template Name as Title page
+      cy.get('div > h3')
+        .should('exist')
+        .and('have.text', 'New Test Recurring Template')
+        .and('have.css', 'font-weight', '700') //font bold
+
+      //Click Add button next beside the Tasks
+      cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+        .find(' > button')
+        .click()
+        .wait(1000)
+
+      //Enter task Name for SI-Operation
+      cy.get('input[name="title"]')
+        .should('exist')
+        .clear()
+        .type('Adding new task Operation')
+        .wait(700)
+        .should('have.value', 'Adding new task Operation')
+
+      //Enter Task Description
+      cy.get('input[name="description"]')
+        .should('exist')
+        .clear()
+        .type('This description is just for testing purposes only')
+        .wait(700)
+        .should('have.value', 'This description is just for testing purposes only')
+
+      //Select SI-OPERATIONS IN THE DEPARTMENT drop down menu
+      cy.get('select[name="department"]')
+        .should('exist')
+        .select('SI-OPERATIONS')
+        .wait(700)
+
+      //Click the check/submit/save button
+      cy.get('div.grid > div > button:nth-child(1)')
+        .should('exist')
+        .click()
+        .wait(3000)
+
+      //verify alert-success modal popup
+      cy.get('div.overflow-y-auto > div.min-h-full')
+        .should('exist')
+        .within(()=>{
+          //assert check logo
+          cy.get(' > div > div > svg')
+            .should('exist')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+          //assert message
+          cy.get(' > div > div')
+            .should('exist')
+            .and('have.text', 'Template has been created.')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+            .and('have.css', 'font-weight', '400')  //font bold
+        })
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //verify now at the SI-Operations
+      ////////// SI-OPERATIONS ASSERTIONS STARTS HERE /////////////
+
+      //verify 1 tasks beside the title SI-Operations
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(1)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div:nth-child(1) > div > p')
+            .should('exist')
+            .and('contain', '1 task')
+        })
+
+      //Click the SI-Operations
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(1)')
+        .click()
+        .wait(1000)
+
+      //verify Task Name, Task Description, SI-Operations Department, Edit and Delete icons 
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(1)')
+        .should('exist')
+        .within(()=>{
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Adding new task Operation')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This description is just for testing purposes only')
+          //assert SI-Operations
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > p')
+            .should('exist')
+            .and('have.text', 'SI-OPERATIONS')
+            .and('have.css', 'color', 'rgb(0, 47, 93)') //text color
+            .and('have.css', 'background-color', 'rgb(211, 228, 245)') //background color
+            .and('have.css', 'border-radius', '40px')
+          //assert Edit button
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(1)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'background-color', 'rgb(0, 47, 93)')
+            .and('have.css', 'border-radius', '10px')
+            .find('svg').should('have.css', 'color', 'rgb(255, 255, 255)')
+          //assert Delete button
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(2)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'border-color', 'rgb(148, 148, 148)')
+            .and('have.css', 'background-color', 'rgb(255, 255, 255)')
+            .and('have.css', 'border-radius', '10px')
+            .find('svg').should('have.css', 'color', 'rgb(148, 148, 148)')
+        })
+
+      //Click the edit button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(1)')
+        .within(()=>{
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(1)')
+            .click()
+            .wait(1000)
+        })
+
+      //Edit Task Name and Task Description
+      cy.get('form > div.py-4 > div')
+        .should('exist')
+        .within(()=>{
+          //Edit Task Name
+          cy.get(' > div:nth-child(1) > input[name="title"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('Operation New Task')
+            .wait(700)
+            .should('have.value', 'Operation New Task')
+          //Edit Task Description
+          cy.get(' > div:nth-child(2) > input[name="description"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('This is a an operation task')
+            .wait(700)
+            .should('have.value', 'This is a an operation task')
+        })
+
+      //Click the Save/submit/check button
+      cy.get('form > div.py-4 > div > div:nth-child(5) > button:nth-child(1)')
+        .click()
+        .wait(3000)
+
+      //verify alert-success modal popup
+      cy.get('div.overflow-y-auto > div.min-h-full')
+        .should('exist')
+        .within(()=>{
+          //assert check logo
+          cy.get(' > div > div > svg')
+            .should('exist')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+          //assert message
+          cy.get(' > div > div')
+            .should('exist')
+            .and('have.text', 'Template has been successfully updated.')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+            .and('have.css', 'font-weight', '400')  //font bold
+        })
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //verify the changes reflect for Task Name and Task Description
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(1)')
+        .should('exist')
+        .within(()=>{
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Operation New Task')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This is a an operation task')
+        })
+
+      //Click the delete button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(1)')
+        .should('exist')
+        .within(()=>{
+          //click Delete button
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(2)')
+            .should('exist')
+            .click()
+            .wait(3000)
+        })
+
+      //verify alert-success modal popup
+      cy.get('div.overflow-y-auto > div.min-h-full')
+        .should('exist')
+        .within(()=>{
+          //assert check logo
+          cy.get(' > div > div > svg')
+            .should('exist')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+          //assert message
+          cy.get(' > div > div')
+            .should('exist')
+            .and('have.text', 'Template has now been deleted from the system')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+            .and('have.css', 'font-weight', '400')  //font bold
+        })
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //verify that it should be deleted and there should be no more total count number beside the SI-Operations title
+      //verify 1 tasks beside the title SI-Operations should not exist
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(1)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div:nth-child(1) > div > p')
+            .should('not.contain', '1 task')
+        })
+
+      //verify 
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(1)')
+        .click()
+        .wait(1000)
+        .within(()=>{
+          //assert Description, Recurring, Department, and Actions column names
+          const operationcolNames = [
+            'Description',
+            'Recurring',
+            'Department',
+            'Actions'
+          ]
+          cy.get(' > div:nth-child(1) > p').each(($option, index)=>{
+            cy.wrap($option)
+              .should('exist')
+              .and('have.text', operationcolNames[index])
+            cy.log(operationcolNames[index])
+          })
+          //assert No Items
+          cy.get(' > div:nth-child(2) > p')
+            .should('exist')
+            .and('have.text', 'No Items')
+        })
+      
+      ////////// SI-OPERATIONS ASSERTIONS ENDS HERE /////////////  
+      
+      //Click Add button next beside the Tasks
+      cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+        .find(' > button')
+        .click()
+        .wait(1000)
+
+      //Enter task Name for SI-Operation
+      cy.get('input[name="title"]')
+        .should('exist')
+        .clear()
+        .type('Adding new task PPC')
+        .wait(700)
+        .should('have.value', 'Adding new task PPC')
+
+      //Enter Task Description
+      cy.get('input[name="description"]')
+        .should('exist')
+        .clear()
+        .type('This description is just for testing purposes only')
+        .wait(700)
+        .should('have.value', 'This description is just for testing purposes only')
+
+      //Select SI-PPC IN THE DEPARTMENT drop down menu
+      cy.get('select[name="department"]')
+        .should('exist')
+        .select('SI-PPC')
+        .wait(700)
+
+      //Click the check/submit/save button
+      cy.get('div.grid > div > button:nth-child(1)')
+        .should('exist')
+        .click()
+        .wait(3000)
+
+      //verify alert-success modal popup
+      cy.get('div.overflow-y-auto > div.min-h-full')
+        .should('exist')
+        .within(()=>{
+          //assert check logo
+          cy.get(' > div > div > svg')
+            .should('exist')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+          //assert message
+          cy.get(' > div > div')
+            .should('exist')
+            .and('have.text', 'Template has been created.')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+            .and('have.css', 'font-weight', '400')  //font bold
+        })
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+    
+      //verify now at SI-PPC
+      ////////// SI-PPC ASSERTIONS STARTS HERE /////////////
+
+      //Click the SI-PPC - it should reveal additional within element
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(2)')
+        .click()
+        .wait(1000)
+
+      //verify SI-PPC
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(2)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('exist')
+            .and('contain', '1 task')
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Adding new task PPC')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This description is just for testing purposes only')
+          //assert SI-PPC Department
+          cy.get(' > div:nth-child(2) > div > div > div >div:nth-child(4) > p')
+            .should('exist')
+            .and('have.text', 'SI-PPC')
+            .and('have.css', 'color', 'rgb(191, 166, 84)') //text color
+            .and('have.css', 'background-color', 'rgb(255, 239, 208)')
+            .and('have.css', 'border-radius', '40px')
+          //assert Edit button
+          cy.get(' > div:nth-child(2) > div > div > div >div:nth-child(5) > button:nth-child(1)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'background-color', 'rgb(0, 47, 93)')
+            .and('have.css', 'border-radius', '10px')
+            .find('svg').should('have.css', 'color', 'rgb(255, 255, 255)')
+          //assert Delete button
+          cy.get(' > div:nth-child(2) > div > div > div >div:nth-child(5) > button:nth-child(2)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'background-color', 'rgb(255, 255, 255)')
+            .and('have.css', 'border-radius', '10px')
+            .and('have.css', 'border-color', 'rgb(148, 148, 148)')
+            .find('svg').should('have.css', 'color', 'rgb(148, 148, 148)')
+        })
+
+      //Click Edit button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(2)')
+        .within(()=>{
+          cy.get(' > div:nth-child(2) > div > div > div >div:nth-child(5) > button:nth-child(1)')
+            .click()
+            .wait(1000)
+        })
+
+      //Edit Task Name, and Task Description
+      cy.get('form > div.py-4  > div')
+        .should('exist')
+        .within(()=>{
+          //Edit Task Name
+          cy.get(' > div:nth-child(1) > input[name="title"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('Add New SI-PPC Task')
+            .wait(700)
+            .should('have.value', 'Add New SI-PPC Task')
+          //Edit Task Description
+          cy.get(' > div:nth-child(2) > input[name="description"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('This is for SI-PPC Task Description')
+            .wait(700)
+            .should('have.value', 'This is for SI-PPC Task Description')
+        })
+
+      //Click check/submit/save button
+      cy.get('form > div.py-4 > div > div:nth-child(5) > button:nth-child(1)')
+        .click()
+        .wait(3000)
+
+      //verify alert-success modal popup
+      cy.get('div.overflow-y-auto > div.min-h-full')
+        .should('exist')
+        .within(()=>{
+          //assert check logo
+          cy.get(' > div > div > svg')
+            .should('exist')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+          //assert message
+          cy.get(' > div > div')
+            .should('exist')
+            .and('have.text', 'Template has been successfully updated.')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+            .and('have.css', 'font-weight', '400')  //font bold
+        })
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //verify that it reflect changes made in Task Name and Task description
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(2)')
+        .should('exist')
+        .within(()=>{
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Add New SI-PPC Task')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This is for SI-PPC Task Description')
+        })
+
+      //Click Delete button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(2) > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(2)')
+        .click()
+        .wait(3000)
+
+       //then simulate pressing esc key in your keyboard
+       cy.get('body').type('{esc}');
+       cy.wait(3000)
+
+      //verify the total count is not visible, the Task Name and the Task description, basically the entire added/edited task
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(2)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('not.contain', '1 task')
+        })
+      
+      //verify that it is not visible except for 'No Items
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(2) > div:nth-child(2) > p')
+        .should('exist')
+        .and('have.text', 'No Items')
+
+      ////////// SI-PPC ASSERTIONS ENDS HERE /////////////
+
+      //Click Add button next beside the Tasks
+      cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+        .find(' > button')
+        .click()
+        .wait(1000)
+
+      //Enter task Name for SI-Operation
+      cy.get('input[name="title"]')
+        .should('exist')
+        .clear()
+        .type('Adding new task WRITING')
+        .wait(700)
+        .should('have.value', 'Adding new task WRITING')
+
+      //Enter Task Description
+      cy.get('input[name="description"]')
+        .should('exist')
+        .clear()
+        .type('This description is just for testing purposes only')
+        .wait(700)
+        .should('have.value', 'This description is just for testing purposes only')
+
+      //Select SI-WRITING IN THE DEPARTMENT drop down menu
+      cy.get('select[name="department"]')
+        .should('exist')
+        .select('SI-WRITING')
+        .wait(700)
+
+      //Click the check/submit/save button
+      cy.get('div.grid > div > button:nth-child(1)')
+        .should('exist')
+        .click()
+        .wait(3000)
+
+      //verify alert-success modal popup
+      cy.get('div.overflow-y-auto > div.min-h-full')
+        .should('exist')
+        .within(()=>{
+          //assert check logo
+          cy.get(' > div > div > svg')
+            .should('exist')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+          //assert message
+          cy.get(' > div > div')
+            .should('exist')
+            .and('have.text', 'Template has been created.')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+            .and('have.css', 'font-weight', '400')  //font bold
+        })
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+    
+      //verify now at SI-Writing
+      ////////// SI-Writing ASSERTIONS STARTS HERE /////////////
+
+      //Click SI-Writing - it should reveal additional within element
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(3)')
+        .click()
+        .wait(1000)
+
+      //verify SI-Writing
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(3)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('exist')
+            .and('contain', '1 task')
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Adding new task WRITING')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This description is just for testing purposes only')
+          //assert SI-Writing Department
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > p')
+            .should('exist')
+            .and('have.text', 'SI-WRITING')
+            .and('have.css', 'color', 'rgb(174, 99, 209)') //text color
+            .and('have.css', 'background-color', 'rgb(242, 225, 255)')
+            .and('have.css', 'border-radius', '40px')
+          //assert Edit button
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(1)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'background-color', 'rgb(0, 47, 93)')
+            .and('have.css', 'border-radius', '10px')
+            .find('svg').should('have.css', 'color', 'rgb(255, 255, 255)')
+          //assert Delete button
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(2)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'background-color', 'rgb(255, 255, 255)')
+            .and('have.css', 'border-radius', '10px')
+            .and('have.css', 'border-color', 'rgb(148, 148, 148)')
+            .find('svg').should('have.css', 'color', 'rgb(148, 148, 148)')
+        })
+
+      //Now click the Edit button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(3)')
+        .within(()=>{
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(1)')
+            .click()
+            .wait(1000)
+        })
+
+      //Edit Task Name and Task Description
+      cy.get('form > div.py-4 > div')
+        .within(()=>{
+          //Edit Task Name
+          cy.get(' > div:nth-child(1) > input[name="title"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('Add New SI-Writing Task')
+            .wait(700)
+            .should('have.value', 'Add New SI-Writing Task')
+          //Edit Task Description
+          cy.get(' > div:nth-child(2) > input[name="description"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('This is for SI-WRITING Task Description')
+            .wait(700)
+            .should('have.value', 'This is for SI-WRITING Task Description')
+        })
+
+      //Click check/submit/save button
+      cy.get('form > div.py-4 > div > div:nth-child(5) > button:nth-child(1)')
+        .click()
+        .wait(3000)
+
+      //verify alert-success modal popup
+      cy.get('div.overflow-y-auto > div.min-h-full')
+        .should('exist')
+        .within(()=>{
+          //assert check logo
+          cy.get(' > div > div > svg')
+            .should('exist')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+          //assert message
+          cy.get(' > div > div')
+            .should('exist')
+            .and('have.text', 'Template has been successfully updated.')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+            .and('have.css', 'font-weight', '400')  //font bold
+        })
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //verify that the changes reflect
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(3)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('exist')
+            .and('contain', '1 task')
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Add New SI-Writing Task')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This is for SI-WRITING Task Description')
+        })
+
+      //Click the Delete button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(3) > div:nth-child(2) > div > div > div >div:nth-child(5) > button:nth-child(2)')
+        .click()
+        .wait(3000)
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+     //verify the total count is not visible, the Task Name and the Task description, basically the entire added/edited task
+     cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(3)')
+       .should('exist')
+       .within(()=>{
+         //assert 1 task
+         cy.get(' > div > div > p')
+           .should('not.contain', '1 task')
+       })
+
+      //verify that it is not visible except for 'No Items
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(3) > div:nth-child(2) > p')
+        .should('exist')
+        .and('have.text', 'No Items')
+
+      ////////// SI-Writing ASSERTIONS ENDS HERE /////////////
+
+       //Click Add button next beside the Tasks
+      cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+      .find(' > button')
+      .click()
+      .wait(1000)
+
+    //Enter task Name for SI-Operation
+    cy.get('input[name="title"]')
+      .should('exist')
+      .clear()
+      .type('Adding new task DESIGN')
+      .wait(700)
+      .should('have.value', 'Adding new task DESIGN')
+
+    //Enter Task Description
+    cy.get('input[name="description"]')
+      .should('exist')
+      .clear()
+      .type('This description is just for testing purposes only')
+      .wait(700)
+      .should('have.value', 'This description is just for testing purposes only')
+
+    //Select SI-DESIGN IN THE DEPARTMENT drop down menu
+    cy.get('select[name="department"]')
+      .should('exist')
+      .select('SI-DESIGN')
+      .wait(700)
+
+    //Click the check/submit/save button
+    cy.get('div.grid > div > button:nth-child(1)')
+      .should('exist')
+      .click()
+      .wait(3000)
+
+    //then simulate pressing esc key in your keyboard
+    cy.get('body').type('{esc}');
+    cy.wait(3000)
+  
+    //verify now at SI-DESIGN
+    ////////// SI-Design ASSERTIONS STARTS HERE /////////////
+
+    //Click the SI_Design - it should reveal additional within element
+    cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(4)')
+      .click()
+      .wait(1000)
+
+    //verify SI-Design
+    cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(4)')
+      .should('exist')
+      .within(()=>{
+        //assert 1 task
+        cy.get(' > div > div > p')
+          .should('exist')
+          .and('contain', '1 task')
+        //assert Task Name
+        cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+          .should('exist')
+          .and('have.text', 'Adding new task DESIGN')
+        //assert Task Description
+        cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+          .should('exist')
+          .and('have.text', 'This description is just for testing purposes only')
+        //assert SI-Design Department
+        cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > p')
+          .should('exist')
+          .and('have.text', 'SI-DESIGN')
+          .and('have.css', 'color', 'rgb(225, 77, 202)') //text color
+          .and('have.css', 'background-color', 'rgb(255, 212, 246)')
+          .and('have.css', 'border-radius', '40px')
+        //assert Edit button
+        cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(1)')
+          .should('exist')
+          .and('not.be.disabled')
+          .and('have.css', 'background-color', 'rgb(0, 47, 93)')
+          .and('have.css', 'border-radius', '10px')
+          .find('svg').should('have.css', 'color', 'rgb(255, 255, 255)')
+        //assert Delete button
+        cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(2)')
+          .should('exist')
+          .and('not.be.disabled')
+          .and('have.css', 'background-color', 'rgb(255, 255, 255)')
+          .and('have.css', 'border-radius', '10px')
+          .and('have.css', 'border-color', 'rgb(148, 148, 148)')
+          .find('svg').should('have.css', 'color', 'rgb(148, 148, 148)')
+      })
+
+    //Click Edit button
+    cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(4) > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(1)')
+      .click()
+
+    //Edit Task Name and Task Description
+    cy.get('form > div.py-4 > div')
+      .within(()=>{
+        //Edit Task Name
+        cy.get(' > div:nth-child(1) > input[name="title"]')
+          .should('exist')
+          .and('not.be.disabled')
+          .clear()
+          .type('Add New SI-Design Task')
+          .wait(700)
+          .should('have.value', 'Add New SI-Design Task')
+        //Edit Task Description
+        cy.get(' > div:nth-child(2) > input[name="description"]')
+          .should('exist')
+          .and('not.be.disabled')
+          .clear()
+          .type('This is for SI-DESIGN Task Description')
+          .wait(700)
+          .should('have.value', 'This is for SI-DESIGN Task Description')
+      })
+
+      //Click check/submit/save button
+      cy.get('form > div.py-4 > div > div:nth-child(5) > button:nth-child(1)')
+        .click()
+        .wait(3000)
+      
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //verify that changes immediately reflect
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(4)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('exist')
+            .and('contain', '1 task')
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Add New SI-Design Task')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This is for SI-DESIGN Task Description')
+        })
+
+      //Click the Delete button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(4) > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(2)')
+        .click()
+        .wait(3000)
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //verify there is no more '1 task' label
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(4)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('not.contain', '1 task')
+        })
+
+      //verify that it is not visible except for 'No Items
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(4) > div:nth-child(2) > p')
+        .should('exist')
+        .and('have.text', 'No Items')
+
+      ////////// SI-Design ASSERTIONS ENDS HERE /////////////
+
+      //Click Add button next beside the Tasks
+      cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+      .find(' > button')
+      .click()
+      .wait(1000)
+
+      //Enter task Name for SI-Operation
+      cy.get('input[name="title"]')
+        .should('exist')
+        .clear()
+        .type('Adding new task ADMIN')
+        .wait(700)
+        .should('have.value', 'Adding new task ADMIN')
+
+      //Enter Task Description
+      cy.get('input[name="description"]')
+        .should('exist')
+        .clear()
+        .type('This description is just for testing purposes only')
+        .wait(700)
+        .should('have.value', 'This description is just for testing purposes only')
+
+      //Select SI-DESIGN IN THE DEPARTMENT drop down menu
+      cy.get('select[name="department"]')
+        .should('exist')
+        .select('SI-ADMIN')
+        .wait(700)
+
+      //Click the check/submit/save button
+      cy.get('div.grid > div > button:nth-child(1)')
+        .should('exist')
+        .click()
+        .wait(3000)
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+    
+      //verify now at SI-ADMIN
+      ////////// SI-Admin ASSERTIONS STARTS HERE /////////////
+
+      //Click the SI-Admin - it should reveal additional within element
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(5)')
+      .click()
+      .wait(1000)
+
+        //verify SI-Admin
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(5)')
+          .should('exist')
+          .within(()=>{
+            //assert 1 task
+            cy.get(' > div > div > p')
+              .should('exist')
+              .and('contain', '1 task')
+            //assert Task Name
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+              .should('exist')
+              .and('have.text', 'Adding new task ADMIN')
+            //assert Task Description
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+              .should('exist')
+              .and('have.text', 'This description is just for testing purposes only')
+            //assert SI-Admin Department
+            cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > p')
+              .should('exist')
+              .and('have.text', 'SI-ADMIN')
+              .and('have.css', 'color', 'rgb(216, 91, 91)') //text color
+              .and('have.css', 'background-color', 'rgb(255, 229, 229)')
+              .and('have.css', 'border-radius', '40px')
+            //assert Edit button
+            cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(1)')
+              .should('exist')
+              .and('not.be.disabled')
+              .and('have.css', 'background-color', 'rgb(0, 47, 93)')
+              .and('have.css', 'border-radius', '10px')
+              .find('svg').should('have.css', 'color', 'rgb(255, 255, 255)')
+            //assert Delete button
+            cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(2)')
+              .should('exist')
+              .and('not.be.disabled')
+              .and('have.css', 'background-color', 'rgb(255, 255, 255)')
+              .and('have.css', 'border-radius', '10px')
+              .and('have.css', 'border-color', 'rgb(148, 148, 148)')
+              .find('svg').should('have.css', 'color', 'rgb(148, 148, 148)')
+          })
+
+        //Click the Edit button
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(5) > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(1)')
+          .click()
+          .wait(1000)
+
+        //Edit Task Name and Task Description
+        cy.get('form > div.py-4 > div')
+          .within(()=>{
+            //Edit Task Name
+            cy.get(' > div:nth-child(1) > input[name="title"]')
+              .should('exist')
+              .and('not.be.disabled')
+              .clear()
+              .type('Add New SI-Admin Task')
+              .wait(700)
+              .should('have.value', 'Add New SI-Admin Task')
+            //Edit Task Description
+            cy.get(' > div:nth-child(2) > input[name="description"]')
+              .should('exist')
+              .and('not.be.disabled')
+              .clear()
+              .type('This is for SI-ADMIN Task Description')
+              .wait(700)
+              .should('have.value', 'This is for SI-ADMIN Task Description')
+          })
+
+        //Click the check/submit/save button
+        cy.get('form > div.py-4 > div > div:nth-child(5) > button:nth-child(1)')
+          .click()
+          .wait(3000)
+        
+        //then simulate pressing esc key in your keyboard
+        cy.get('body').type('{esc}');
+        cy.wait(3000)
+
+        //verify that it reflect immediately the changes
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(5)')
+          .should('exist')
+          .within(()=>{
+            //assert 1 task
+            cy.get(' > div > div > p')
+              .should('exist')
+              .and('contain', '1 task')
+            //assert Task Name
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+              .should('exist')
+              .and('have.text', 'Add New SI-Admin Task')
+            //assert Task Description
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+              .should('exist')
+              .and('have.text', 'This is for SI-ADMIN Task Description')
+          })
+
+        //Click the Delete button
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(5) > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(2)')
+          .click()
+          .wait(3000)
+
+        //then simulate pressing esc key in your keyboard
+        cy.get('body').type('{esc}');
+        cy.wait(3000)
+
+        //verify that there is no more 1 task label
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(5)')
+          .should('exist')
+          .within(()=>{
+            //assert 1 task
+            cy.get(' > div > div > p')
+              .should('exist')
+              .and('not.contain', '1 task')
+          })
+        
+        //verify that it is not visible except for 'No Items
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(5) > div:nth-child(2) > p')
+          .should('exist')
+          .and('have.text', 'No Items')
+        
+        ////////// SI-Admin ASSERTIONS ENDS HERE /////////////
+
+        //Click Add button next beside the Tasks
+        cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+          .find(' > button')
+          .click()
+          .wait(1000)
+
+        //Enter task Name for SI-Operation
+        cy.get('input[name="title"]')
+          .should('exist')
+          .clear()
+          .type('Adding new task BILLING')
+          .wait(700)
+          .should('have.value', 'Adding new task BILLING')
+
+        //Enter Task Description
+        cy.get('input[name="description"]')
+          .should('exist')
+          .clear()
+          .type('This description is just for testing purposes only')
+          .wait(700)
+          .should('have.value', 'This description is just for testing purposes only')
+
+        //Select BILLING IN THE DEPARTMENT drop down menu
+        cy.get('select[name="department"]')
+          .should('exist')
+          .select('BILLING')
+          .wait(700)
+
+        //Click the check/submit/save button
+        cy.get('div.grid > div > button:nth-child(1)')
+          .should('exist')
+          .click()
+          .wait(3000)
+
+        //then simulate pressing esc key in your keyboard
+        cy.get('body').type('{esc}');
+        cy.wait(3000)
+      
+        //verify now at SI-BILLING
+        ////////// Billing ASSERTIONS STARTS HERE ////////////
+
+        //Click Billing - it should reveal additional within element
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(6)')
+          .click()
+          .wait(1000)
+
+        //verify Billing
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(6)')
+          .should('exist')
+          .within(()=>{
+            //assert 1 task
+            cy.get(' > div > div > p')
+              .should('exist')
+              .and('contain', '1 task')
+            //assert Task Name
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+              .should('exist')
+              .and('have.text', 'Adding new task BILLING')
+            //assert Task Description
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+              .should('exist')
+              .and('have.text', 'This description is just for testing purposes only')
+            //assert BILLING Department
+            cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > p')
+              .should('exist')
+              .and('have.text', 'BILLING')
+              .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+              .and('have.css', 'background-color', 'rgb(207, 255, 221)')
+              .and('have.css', 'border-radius', '40px')
+            //assert Edit button
+            cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(1)')
+              .should('exist')
+              .and('not.be.disabled')
+              .and('have.css', 'background-color', 'rgb(0, 47, 93)')
+              .and('have.css', 'border-radius', '10px')
+              .find('svg').should('have.css', 'color', 'rgb(255, 255, 255)')
+            //assert Delete button
+            cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(2)')
+              .should('exist')
+              .and('not.be.disabled')
+              .and('have.css', 'background-color', 'rgb(255, 255, 255)')
+              .and('have.css', 'border-radius', '10px')
+              .and('have.css', 'border-color', 'rgb(148, 148, 148)')
+              .find('svg').should('have.css', 'color', 'rgb(148, 148, 148)')
+          })
+
+        //Click Edit Button
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(6) > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(1)')
+          .click()
+          .wait(1000)
+
+        //Edit Task Name and Task Description
+        cy.get('form > div.py-4 > div')
+          .within(()=>{
+            //Edit Task Name
+            cy.get(' > div:nth-child(1) > input[name="title"]')
+              .should('exist')
+              .and('not.be.disabled')
+              .clear()
+              .type('Add New Billing Task')
+              .wait(700)
+              .should('have.value', 'Add New Billing Task')
+            //Edit Task Description
+            cy.get(' > div:nth-child(2) > input[name="description"]')
+              .should('exist')
+              .and('not.be.disabled')
+              .clear()
+              .type('This is for BILLING Task Description')
+              .wait(700)
+              .should('have.value', 'This is for BILLING Task Description')
+          })
+
+        //Click the check/submit/save button
+        cy.get('form > div.py-4 > div > div:nth-child(5) > button:nth-child(1)')
+          .click()
+          .wait(3000)
+        
+        //then simulate pressing esc key in your keyboard
+        cy.get('body').type('{esc}');
+        cy.wait(3000)
+
+        //verify changes reflect immediately 
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(6)')
+          .should('exist')
+          .within(()=>{
+            //assert 1 task
+            cy.get(' > div > div > p')
+              .should('exist')
+              .and('contain', '1 task')
+            //assert Task Name
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+              .should('exist')
+              .and('have.text', 'Add New Billing Task')
+            //assert Task Description
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+              .should('exist')
+              .and('have.text', 'This is for BILLING Task Description')
+          })
+
+        //Click the Delete button
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(6) > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(2)')
+          .click()
+          .wait(3000)
+
+        //then simulate pressing esc key in your keyboard
+        cy.get('body').type('{esc}');
+        cy.wait(3000)
+
+        //verify no more '1 task'
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(6)')
+          .should('exist')
+          .within(()=>{
+            //assert 1 task
+            cy.get(' > div > div > p')
+              .should('exist')
+              .and('not.contain', '1 task')
+          })
+
+        //verify that it is not visible except for 'No Items
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(6) > div:nth-child(2) > p')
+          .should('exist')
+          .and('have.text', 'No Items')
+
+        ////////// Billing ASSERTIONS ENDS HERE /////////////
+
+        //Click Add button next beside the Tasks
+        cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+          .find(' > button')
+          .click()
+          .wait(1000)
+
+        //Enter task Name for SI-Operation
+        cy.get('input[name="title"]')
+          .should('exist')
+          .clear()
+          .type('Adding new task SALES')
+          .wait(700)
+          .should('have.value', 'Adding new task SALES')
+
+        //Enter Task Description
+        cy.get('input[name="description"]')
+          .should('exist')
+          .clear()
+          .type('This description is just for testing purposes only')
+          .wait(700)
+          .should('have.value', 'This description is just for testing purposes only')
+
+        //Select SALES IN THE DEPARTMENT drop down menu
+        cy.get('select[name="department"]')
+          .should('exist')
+          .select('SALES')
+          .wait(700)
+
+        //Click the check/submit/save button
+        cy.get('div.grid > div > button:nth-child(1)')
+          .should('exist')
+          .click()
+          .wait(3000)
+
+        //then simulate pressing esc key in your keyboard
+        cy.get('body').type('{esc}');
+        cy.wait(3000)
+      
+        //verify now at SALES
+        ////////// Sales ASSERTIONS STARTS HERE /////////////
+
+        //Click again Sales - it should hide the additional elements within
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(7)')
+          .find(' > div > div > div')
+          .click()
+          .wait(1000)
+
+        //verify Sales
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(7)')
+          .should('exist')
+          .within(()=>{
+            //assert 1 task
+            cy.get(' > div > div > p')
+              .should('exist')
+              .and('contain', '1 task')
+            //assert Task Name
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+              .should('exist')
+              .and('have.text', 'Adding new task SALES')
+            //assert Task Description
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+              .should('exist')
+              .and('have.text', 'This description is just for testing purposes only')
+            //assert SALES Department
+            cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > p')
+              .should('exist')
+              .and('have.text', 'SALES')
+              .and('have.css', 'color', 'rgb(195, 0, 0)') //text color
+              .and('have.css', 'background-color', 'rgb(255, 175, 175)')
+              .and('have.css', 'border-radius', '40px')
+            //assert Edit button
+            cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(1)')
+              .should('exist')
+              .and('not.be.disabled')
+              .and('have.css', 'background-color', 'rgb(0, 47, 93)')
+              .and('have.css', 'border-radius', '10px')
+              .find('svg').should('have.css', 'color', 'rgb(255, 255, 255)')
+            //assert Delete button
+            cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(2)')
+              .should('exist')
+              .and('not.be.disabled')
+              .and('have.css', 'background-color', 'rgb(255, 255, 255)')
+              .and('have.css', 'border-radius', '10px')
+              .and('have.css', 'border-color', 'rgb(148, 148, 148)')
+              .find('svg').should('have.css', 'color', 'rgb(148, 148, 148)')
+          })
+
+      //Click Edit button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(7) > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(1)')
+        .click()
+        .wait(1000)
+
+      //Edit Task Name and Task Description
+      cy.get('form > div.py-4 > div')
+        .within(()=>{
+          //Edit Task Name
+          cy.get(' > div:nth-child(1) > input[name="title"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('Add New Sales Task')
+            .wait(700)
+            .should('have.value', 'Add New Sales Task')
+          //Edit Task Description
+          cy.get(' > div:nth-child(2) > input[name="description"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('This is for SALES Task Description')
+            .wait(700)
+            .should('have.value', 'This is for SALES Task Description')
+        })
+      
+      //Click the check/submit/save button
+      cy.get('form > div.py-4 > div > div:nth-child(5) > button:nth-child(1)')
+        .click()
+        .wait(3000)
+    
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+      
+      //verify changes reflect immediately
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(7)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('exist')
+            .and('contain', '1 task')
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Add New Sales Task')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This is for SALES Task Description')
+        })
+
+      //Click Delete button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(7) > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(2)')
+        .click()
+        .wait(3000)
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //verify there is no more '1 task'
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(7)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('exist')
+            .and('not.contain', '1 task')
+        })
+
+      //verify that it is not visible except for 'No Items
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(7) > div:nth-child(2) > p')
+        .should('exist')
+        .and('have.text', 'No Items')
+
+      ////////// Sales ASSERTIONS ENDS HERE /////////////
+
+      //Click Add button next beside the Tasks
+      cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+        .find(' > button')
+        .click()
+        .wait(1000)
+
+      //Enter task Name for SI-Operation
+      cy.get('input[name="title"]')
+        .should('exist')
+        .clear()
+        .type('Adding new task LEAD GENERATION')
+        .wait(700)
+        .should('have.value', 'Adding new task LEAD GENERATION')
+
+      //Enter Task Description
+      cy.get('input[name="description"]')
+        .should('exist')
+        .clear()
+        .type('This description is just for testing purposes only')
+        .wait(700)
+        .should('have.value', 'This description is just for testing purposes only')
+
+      //Select LEAD_GENERATION IN THE DEPARTMENT drop down menu
+      cy.get('select[name="department"]')
+        .should('exist')
+        .select('LEAD_GENERATION')
+        .wait(700)
+
+      //Click the check/submit/save button
+      cy.get('div.grid > div > button:nth-child(1)')
+        .should('exist')
+        .click()
+        .wait(3000)
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+      
+      //verify now at LEAD GENERATION
+      ////////// Lead Generation ASSERTIONS STARTS HERE /////////////
+
+      //Click Lead Generation - it should reveal additional within element
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(8)')
+        .click()
+        .wait(1000)
+
+      //verify Lead Generation
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(8)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('exist')
+            .and('contain', '1 task')
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Adding new task LEAD GENERATION')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This description is just for testing purposes only')
+          //assert LEAD GENERATION Department
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > p')
+            .should('exist')
+            .and('have.text', 'LEAD_GENERATION')
+            .and('have.css', 'color', 'rgb(212, 130, 54)') //text color
+            .and('have.css', 'background-color', 'rgb(255, 210, 185)')
+            .and('have.css', 'border-radius', '40px')
+          //assert Edit button
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(1)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'background-color', 'rgb(0, 47, 93)')
+            .and('have.css', 'border-radius', '10px')
+            .find('svg').should('have.css', 'color', 'rgb(255, 255, 255)')
+          //assert Delete button
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(2)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'background-color', 'rgb(255, 255, 255)')
+            .and('have.css', 'border-radius', '10px')
+            .and('have.css', 'border-color', 'rgb(148, 148, 148)')
+            .find('svg').should('have.css', 'color', 'rgb(148, 148, 148)')
+        })
+
+      //Click Edit button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(8) > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(1)')
+        .click()
+        .wait(1000)
+
+      //Edit Task Name and Task Description
+      cy.get('form > div.py-4 > div')
+        .within(()=>{
+          //Edit Task Name
+          cy.get(' > div:nth-child(1) > input[name="title"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('Add New Lead Generation Task')
+            .wait(700)
+            .should('have.value', 'Add New Lead Generation Task')
+          //Edit Task Description
+          cy.get(' > div:nth-child(2) > input[name="description"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('This is for LEAD GENERATION Task Description')
+            .wait(700)
+            .should('have.value', 'This is for LEAD GENERATION Task Description')
+        })
+
+      //Click the check/submit/save button
+      cy.get('form > div.py-4 > div > div:nth-child(5) > button:nth-child(1)')
+        .click()
+        .wait(3000)
+    
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //verify changes reflect immediately
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(8)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('exist')
+            .and('contain', '1 task')
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Add New Lead Generation Task')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This is for LEAD GENERATION Task Description')
+        })
+
+      //Click Delete button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(8) > div:nth-child(2) > div > div > div > div:nth-child(5) > button:nth-child(2)')
+        .click()
+        .wait(3000)
+
+      //verify there is no more '1 task'
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(8)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('exist')
+            .and('not.contain', '1 task')
+        })
+
+      //verify that it is not visible except for 'No Items
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(8) > div:nth-child(2) > p')
+      .should('exist')
+      .and('have.text', 'No Items')
+
+      ////////// Lead Generation ASSERTIONS ENDS HERE /////////////
+
+    })
+    it("Testcase ID: CATM00010 - Add/Edit/Delete task to each One Time Task for the New One Time Template",()=>{
+
+
+      //Login using account specialist
+      cy.userlogin(loginmodule.EmailAddressInputfield, loginmodule.PasswordInputfield, loginmodule.SigninButton, testdata.userAccounts[0].accountspecialist1, testdata.userAccounts[0].accountspecialistandprojectmanagerpassword)
+
+      //Click the Admin Navigation Module
+      cy.get(modulebutton.AdminModuleButton)
+        .click()
+        .wait(2000)
+        
+      //Click the Task Management link text folder
+      cy.get(linktextfolder.AdminModule[0].TaskManagement)
+        .click()
+        .wait(2000)
+        
+      //verify Add button - if found click
+      cy.get(adminmodulelocator.TaskManageementFolder[0].AddButton)
+        .should('exist')
+        .and('not.be.disabled')
+        .and('have.text', 'Add')
+        .and('have.css', 'color', 'rgb(0, 47, 93)') //text color
+        .and('have.css', 'border-color', 'rgb(0, 47, 93)')
+        .and('have.css', 'border-radius', '40px')
+        .click()
+        .wait(2000)
+
+      //verify Task List Creation Modal popup open
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].modal)
+        .should('exist')
+
+      //Select One Time Template
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].OneTimeTemplate)
+        .click()
+        .wait(1000)
+        .should('have.css', 'border-color', 'rgb(24, 121, 216)') // the entire recurring template has blue border color signify it is seleected
+        .find(' > div > div').should('have.css', 'background-color', 'rgb(24, 121, 216)') //blue dot signify it is selected
+    
+      //Click the Next Button
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].NextButton)
+        .click()
+        .wait(2000)
+
+      //verify the Task List Creation Modal should remain open
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].modal)
+        .should('exist')
+
+      //////// CREATE NEW RECURRING TASKS STARTS HERE ///////////
+
+      //Now Enter Template Name
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].TemplateNameLabelandInputfield)
+        .find(' > input[name="name"]')
+        .clear()
+        .type('New Test One-Time Template')
+        .wait(600)
+        .should('have.value', 'New Test One-Time Template')
+
+      //Select New in Partner Type
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].PartnerTypeLabelandDropdownMenu)
+        .find(' > div > select[name="partnerType"]')
+        .select('new')
+        .wait(600)
+
+      //verify that the selected option goes on top
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].PartnerTypeLabelandDropdownMenu)
+        .find('select option:selected')
+        .should('have.text', 'New')
+
+      //Select Service Category Full Account Management
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].WhichServiceCategoryWIllThisBeUsedLabelandDropdownMenu)
+        .find(' > select[name="partnerService"]')
+        .select('Full Account Management')
+        .wait(600)
+
+      //verify the selected service category goes on top
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].WhichServiceCategoryWIllThisBeUsedLabelandDropdownMenu)
+        .find('select option:selected')
+        .should('have.text', 'Full Account Management')
+
+      ///////// CREATE NEW RECURRING TASKS ENDS HERE ///////////
+       
+      //Click Create Button
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].CreateButton)
+        .click()
+        .wait(2000) 
+
+      //verify alert-success modal popup
+      cy.get('div.overflow-y-auto > div.min-h-full')
+        .should('exist')
+        .within(()=>{
+          //assert check logo
+          cy.get(' > div > div > svg')
+            .should('exist')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+          //assert message
+          cy.get(' > div > div')
+            .should('exist')
+            .and('have.text', 'Template has been created.')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+            .and('have.css', 'font-weight', '400')  //font bold
+        })
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+        
+      //Go to New > One Time Tab
+      //verify One Time and click when found
+      cy.get(adminmodulelocator.TaskManageementFolder[0].pageSubTab[0].OneTimeTab)
+        .click()
+        .wait(3000)
+
+      //verify expected url destination
+      cy.url().should('contain', 'one-time')
+       
+      //////// TASK MANAGEMENT > NEW > RECURRING TABLE LIST ASSERTIONS STARTS HERE ////////////
+
+      //just to be sure that the recently changed template should go to row 1, then I will have to click the Last Updated column
+      cy.get('table > thead > tr > th:nth-child(4)')
+        .click()
+        .wait(2000)
+     
+      //Then verify row 1 each column
+      cy.get('table > tbody > tr:first-child').within(()=>{
+        //assert Template Name
+        TaskManagementTableList.assertColumn1TemplateName(' > td:nth-child(1) > a', 'New Test One-Time Template')
+        //assert Partner Type
+        TaskManagementTableList.assertColumn2PartnerType(' > td:nth-child(2)', 'new')
+        //assert Service Type
+        TaskManagementTableList.assertColumn3ServiceType(' > td:nth-child(3)', 'Full Account Management')
+        //assert Last Updated
+        TaskManagementTableList.assertColumn4LastUpdated(' > td:nth-child(4)', DateTodayIs.TodayDateMMDDYYYY_MonthisinWholeWordandDayiswithTH())
+        //assert Updated By
+        TaskManagementTableList.assertColumn5UpdatedBy(' > td:nth-child(5) > div', 'LP', 'Logan Paul')
+        //aasert Action:Edit
+        TaskManagementTableList.assertColumn6Action(' > td:nth-child(6) > a', 'not.be.disabled', 'Edit') 
+      }) 
+
+      //////// TASK MANAGEMENT > NEW > RECURRING TABLE LIST ASSERTIONS ENDS HERE ////////////
+        
+      //Click the Edit button
+      cy.get('table > tbody > tr:first-child > td:nth-child(6) > a')
+        .click()
+        .wait(3000)
+
+      //Template Name as Title page
+      cy.get('div > h3')
+        .should('exist')
+        .and('have.text', 'New Test One-Time Template')
+        .and('have.css', 'font-weight', '700') //font bold
+
+      //Click Add button next beside the Tasks
+      cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+        .find(' > button')
+        .click()
+        .wait(1000)
+
+      //Enter task Name for SI-Operation
+      cy.get('input[name="title"]')
+        .should('exist')
+        .clear()
+        .type('Adding new task Operation')
+        .wait(700)
+        .should('have.value', 'Adding new task Operation')
+
+      //Enter Task Description
+      cy.get('input[name="description"]')
+        .should('exist')
+        .clear()
+        .type('This description is just for testing purposes only')
+        .wait(700)
+        .should('have.value', 'This description is just for testing purposes only')
+
+      //Select SI-OPERATIONS IN THE DEPARTMENT drop down menu
+      cy.get('select[name="department"]')
+        .should('exist')
+        .select('SI-OPERATIONS')
+        .wait(700)
+
+      //Click the check/submit/save button
+      cy.get('div.grid > div > button:nth-child(1)')
+        .should('exist')
+        .click()
+        .wait(3000)
+
+      //verify alert-success modal popup
+      cy.get('div.overflow-y-auto > div.min-h-full')
+        .should('exist')
+        .within(()=>{
+          //assert check logo
+          cy.get(' > div > div > svg')
+            .should('exist')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+          //assert message
+          cy.get(' > div > div')
+            .should('exist')
+            .and('have.text', 'Template has been created.')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+            .and('have.css', 'font-weight', '400')  //font bold
+        })
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //verify now at the SI-Operations
+      ////////// SI-OPERATIONS ASSERTIONS STARTS HERE /////////////
+
+      //verify 1 tasks beside the title SI-Operations
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(1)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div:nth-child(1) > div > p')
+            .should('exist')
+            .and('contain', '1 task')
+        })
+
+      //Click the SI-Operations
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(1)')
+        .click()
+        .wait(1000)
+
+      //verify Task Name, Task Description, SI-Operations Department, Edit and Delete icons 
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(1)')
+        .should('exist')
+        .within(()=>{
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Adding new task Operation')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This description is just for testing purposes only')
+          //assert SI-Operations
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(3) > p')
+            .should('exist')
+            .and('have.text', 'SI-OPERATIONS')
+            .and('have.css', 'color', 'rgb(0, 47, 93)') //text color
+            .and('have.css', 'background-color', 'rgb(211, 228, 245)') //background color
+            .and('have.css', 'border-radius', '40px')
+          //assert Edit button
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(1)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'background-color', 'rgb(0, 47, 93)')
+            .and('have.css', 'border-radius', '10px')
+            .find('svg').should('have.css', 'color', 'rgb(255, 255, 255)')
+          //assert Delete button
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(2)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'border-color', 'rgb(148, 148, 148)')
+            .and('have.css', 'background-color', 'rgb(255, 255, 255)')
+            .and('have.css', 'border-radius', '10px')
+            .find('svg').should('have.css', 'color', 'rgb(148, 148, 148)')
+        })
+
+      //Click the edit button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(1)')
+        .within(()=>{
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(1)')
+            .click()
+            .wait(1000)
+        })
+
+      //Edit Task Name and Task Description
+      cy.get('form > div.py-4 > div')
+        .should('exist')
+        .within(()=>{
+          //Edit Task Name
+          cy.get(' > div:nth-child(1) > input[name="title"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('Operation New Task')
+            .wait(700)
+            .should('have.value', 'Operation New Task')
+          //Edit Task Description
+          cy.get(' > div:nth-child(2) > input[name="description"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('This is a an operation task')
+            .wait(700)
+            .should('have.value', 'This is a an operation task')
+        })
+
+      //Click the Save/submit/check button
+      cy.get('form > div.py-4 > div > div:nth-child(4) > button:nth-child(1)')
+        .click()
+        .wait(3000)
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //verify the changes reflect for Task Name and Task Description
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(1)')
+        .should('exist')
+        .within(()=>{
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Operation New Task')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This is a an operation task')
+        })
+
+      //Click the delete button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(1)')
+        .should('exist')
+        .within(()=>{
+          //click Delete button
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(2)')
+            .should('exist')
+            .click()
+            .wait(3000)
+        })
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //verify that it should be deleted and there should be no more total count number beside the SI-Operations title
+      //verify 1 tasks beside the title SI-Operations should not exist
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(1)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div:nth-child(1) > div > p')
+            .should('not.contain', '1 task')
+        })
+
+      //verify no more '1 tasks'
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(1)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div:nth-child(1) > div > p')
+            .should('exist')
+            .and('not.contain', '1 task')
+        })
+
+      //verify it was deleted in the SI-OPERATIONS and there is 'No Items'
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(1) > div:nth-child(2) > p')
+        .should('exist')
+        .and('have.text', 'No Items')
+      
+      ////////// SI-OPERATIONS ASSERTIONS ENDS HERE /////////////  
+      
+      //Click Add button next beside the Tasks
+      cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+        .find(' > button')
+        .click()
+        .wait(1000)
+
+      //Enter task Name for SI-Operation
+      cy.get('input[name="title"]')
+        .should('exist')
+        .clear()
+        .type('Adding new task PPC')
+        .wait(700)
+        .should('have.value', 'Adding new task PPC')
+
+      //Enter Task Description
+      cy.get('input[name="description"]')
+        .should('exist')
+        .clear()
+        .type('This description is just for testing purposes only')
+        .wait(700)
+        .should('have.value', 'This description is just for testing purposes only')
+
+      //Select SI-PPC IN THE DEPARTMENT drop down menu
+      cy.get('select[name="department"]')
+        .should('exist')
+        .select('SI-PPC')
+        .wait(700)
+
+      //Click the check/submit/save button
+      cy.get('div.grid > div > button:nth-child(1)')
+        .should('exist')
+        .click()
+        .wait(3000)
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+    
+      //verify now at SI-PPC
+      ////////// SI-PPC ASSERTIONS STARTS HERE /////////////
+
+      //Click the SI-PPC - it should reveal additional within element
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(2)')
+        .click()
+        .wait(1000)
+
+      //verify SI-PPC
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(2)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('exist')
+            .and('contain', '1 task')
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Adding new task PPC')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This description is just for testing purposes only')
+          //assert SI-PPC Department
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(3) > p')
+            .should('exist')
+            .and('have.text', 'SI-PPC')
+            .and('have.css', 'color', 'rgb(191, 166, 84)') //text color
+            .and('have.css', 'background-color', 'rgb(255, 239, 208)')
+            .and('have.css', 'border-radius', '40px')
+          //assert Edit button
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(1)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'background-color', 'rgb(0, 47, 93)')
+            .and('have.css', 'border-radius', '10px')
+            .find('svg').should('have.css', 'color', 'rgb(255, 255, 255)')
+          //assert Delete button
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(2)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'background-color', 'rgb(255, 255, 255)')
+            .and('have.css', 'border-radius', '10px')
+            .and('have.css', 'border-color', 'rgb(148, 148, 148)')
+            .find('svg').should('have.css', 'color', 'rgb(148, 148, 148)')
+        })
+
+      //Click Edit button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(2)')
+        .within(()=>{
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(1)')
+            .click()
+            .wait(1000)
+        })
+
+      //Edit Task Name, and Task Description
+      cy.get('form > div.py-4  > div')
+        .should('exist')
+        .within(()=>{
+          //Edit Task Name
+          cy.get(' > div:nth-child(1) > input[name="title"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('Add New SI-PPC Task')
+            .wait(700)
+            .should('have.value', 'Add New SI-PPC Task')
+          //Edit Task Description
+          cy.get(' > div:nth-child(2) > input[name="description"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('This is for SI-PPC Task Description')
+            .wait(700)
+            .should('have.value', 'This is for SI-PPC Task Description')
+        })
+
+      //Click check/submit/save button
+      cy.get('form > div.py-4 > div > div:nth-child(4) > button:nth-child(1)')
+        .click()
+        .wait(3000)
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //verify that it reflect changes made in Task Name and Task description
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(2)')
+        .should('exist')
+        .within(()=>{
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Add New SI-PPC Task')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This is for SI-PPC Task Description')
+        })
+
+      //Click Delete button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(2) > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(2)')
+        .click()
+        .wait(3000)
+
+       //then simulate pressing esc key in your keyboard
+       cy.get('body').type('{esc}');
+       cy.wait(3000)
+
+      //verify the total count is not visible, the Task Name and the Task description, basically the entire added/edited task
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(2)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('not.contain', '1 task')
+        })
+      
+      //verify that it is not visible except for 'No Items
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(2) > div:nth-child(2) > p')
+        .should('exist')
+        .and('have.text', 'No Items')
+
+      ////////// SI-PPC ASSERTIONS ENDS HERE /////////////
+
+      //Click Add button next beside the Tasks
+      cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+        .find(' > button')
+        .click()
+        .wait(1000)
+
+      //Enter task Name for SI-Operation
+      cy.get('input[name="title"]')
+        .should('exist')
+        .clear()
+        .type('Adding new task WRITING')
+        .wait(700)
+        .should('have.value', 'Adding new task WRITING')
+
+      //Enter Task Description
+      cy.get('input[name="description"]')
+        .should('exist')
+        .clear()
+        .type('This description is just for testing purposes only')
+        .wait(700)
+        .should('have.value', 'This description is just for testing purposes only')
+
+      //Select SI-WRITING IN THE DEPARTMENT drop down menu
+      cy.get('select[name="department"]')
+        .should('exist')
+        .select('SI-WRITING')
+        .wait(700)
+
+      //Click the check/submit/save button
+      cy.get('div.grid > div > button:nth-child(1)')
+        .should('exist')
+        .click()
+        .wait(3000)
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+    
+      //verify now at SI-Writing
+      ////////// SI-Writing ASSERTIONS STARTS HERE /////////////
+
+      //Click SI-Writing - it should reveal additional within element
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(3)')
+        .click()
+        .wait(1000)
+
+      //verify SI-Writing
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(3)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('exist')
+            .and('contain', '1 task')
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Adding new task WRITING')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This description is just for testing purposes only')
+          //assert SI-Writing Department
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(3) > p')
+            .should('exist')
+            .and('have.text', 'SI-WRITING')
+            .and('have.css', 'color', 'rgb(174, 99, 209)') //text color
+            .and('have.css', 'background-color', 'rgb(242, 225, 255)')
+            .and('have.css', 'border-radius', '40px')
+          //assert Edit button
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(1)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'background-color', 'rgb(0, 47, 93)')
+            .and('have.css', 'border-radius', '10px')
+            .find('svg').should('have.css', 'color', 'rgb(255, 255, 255)')
+          //assert Delete button
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(2)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'background-color', 'rgb(255, 255, 255)')
+            .and('have.css', 'border-radius', '10px')
+            .and('have.css', 'border-color', 'rgb(148, 148, 148)')
+            .find('svg').should('have.css', 'color', 'rgb(148, 148, 148)')
+        })
+
+      //Now click the Edit button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(3)')
+        .within(()=>{
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(1)')
+            .click()
+            .wait(1000)
+        })
+
+      //Edit Task Name and Task Description
+      cy.get('form > div.py-4 > div')
+        .within(()=>{
+          //Edit Task Name
+          cy.get(' > div:nth-child(1) > input[name="title"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('Add New SI-Writing Task')
+            .wait(700)
+            .should('have.value', 'Add New SI-Writing Task')
+          //Edit Task Description
+          cy.get(' > div:nth-child(2) > input[name="description"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('This is for SI-WRITING Task Description')
+            .wait(700)
+            .should('have.value', 'This is for SI-WRITING Task Description')
+        })
+
+      //Click check/submit/save button
+      cy.get('form > div.py-4 > div > div:nth-child(4) > button:nth-child(1)')
+        .click()
+        .wait(3000)
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //verify that the changes reflect
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(3)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('exist')
+            .and('contain', '1 task')
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Add New SI-Writing Task')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This is for SI-WRITING Task Description')
+        })
+
+      //Click the Delete button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(3) > div:nth-child(2) > div > div > div >div:nth-child(4) > button:nth-child(2)')
+        .click()
+        .wait(3000)
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+     //verify the total count is not visible, the Task Name and the Task description, basically the entire added/edited task
+     cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(3)')
+       .should('exist')
+       .within(()=>{
+         //assert 1 task
+         cy.get(' > div > div > p')
+           .should('not.contain', '1 task')
+       })
+
+      //verify that it is not visible except for 'No Items
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(3) > div:nth-child(2) > p')
+        .should('exist')
+        .and('have.text', 'No Items')
+
+      ////////// SI-Writing ASSERTIONS ENDS HERE /////////////
+
+       //Click Add button next beside the Tasks
+      cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+      .find(' > button')
+      .click()
+      .wait(1000)
+
+    //Enter task Name for SI-Operation
+    cy.get('input[name="title"]')
+      .should('exist')
+      .clear()
+      .type('Adding new task DESIGN')
+      .wait(700)
+      .should('have.value', 'Adding new task DESIGN')
+
+    //Enter Task Description
+    cy.get('input[name="description"]')
+      .should('exist')
+      .clear()
+      .type('This description is just for testing purposes only')
+      .wait(700)
+      .should('have.value', 'This description is just for testing purposes only')
+
+    //Select SI-DESIGN IN THE DEPARTMENT drop down menu
+    cy.get('select[name="department"]')
+      .should('exist')
+      .select('SI-DESIGN')
+      .wait(700)
+
+    //Click the check/submit/save button
+    cy.get('div.grid > div > button:nth-child(1)')
+      .should('exist')
+      .click()
+      .wait(3000)
+
+    //then simulate pressing esc key in your keyboard
+    cy.get('body').type('{esc}');
+    cy.wait(3000)
+  
+    //verify now at SI-DESIGN
+    ////////// SI-Design ASSERTIONS STARTS HERE /////////////
+
+    //Click the SI_Design - it should reveal additional within element
+    cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(4)')
+      .click()
+      .wait(1000)
+
+    //verify SI-Design
+    cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(4)')
+      .should('exist')
+      .within(()=>{
+        //assert 1 task
+        cy.get(' > div > div > p')
+          .should('exist')
+          .and('contain', '1 task')
+        //assert Task Name
+        cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+          .should('exist')
+          .and('have.text', 'Adding new task DESIGN')
+        //assert Task Description
+        cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+          .should('exist')
+          .and('have.text', 'This description is just for testing purposes only')
+        //assert SI-Design Department
+        cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(3) > p')
+          .should('exist')
+          .and('have.text', 'SI-DESIGN')
+          .and('have.css', 'color', 'rgb(225, 77, 202)') //text color
+          .and('have.css', 'background-color', 'rgb(255, 212, 246)')
+          .and('have.css', 'border-radius', '40px')
+        //assert Edit button
+        cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(1)')
+          .should('exist')
+          .and('not.be.disabled')
+          .and('have.css', 'background-color', 'rgb(0, 47, 93)')
+          .and('have.css', 'border-radius', '10px')
+          .find('svg').should('have.css', 'color', 'rgb(255, 255, 255)')
+        //assert Delete button
+        cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(2)')
+          .should('exist')
+          .and('not.be.disabled')
+          .and('have.css', 'background-color', 'rgb(255, 255, 255)')
+          .and('have.css', 'border-radius', '10px')
+          .and('have.css', 'border-color', 'rgb(148, 148, 148)')
+          .find('svg').should('have.css', 'color', 'rgb(148, 148, 148)')
+      })
+
+    //Click Edit button
+    cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(4) > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(1)')
+      .click()
+
+    //Edit Task Name and Task Description
+    cy.get('form > div.py-4 > div')
+      .within(()=>{
+        //Edit Task Name
+        cy.get(' > div:nth-child(1) > input[name="title"]')
+          .should('exist')
+          .and('not.be.disabled')
+          .clear()
+          .type('Add New SI-Design Task')
+          .wait(700)
+          .should('have.value', 'Add New SI-Design Task')
+        //Edit Task Description
+        cy.get(' > div:nth-child(2) > input[name="description"]')
+          .should('exist')
+          .and('not.be.disabled')
+          .clear()
+          .type('This is for SI-DESIGN Task Description')
+          .wait(700)
+          .should('have.value', 'This is for SI-DESIGN Task Description')
+      })
+
+      //Click check/submit/save button
+      cy.get('form > div.py-4 > div > div:nth-child(4) > button:nth-child(1)')
+        .click()
+        .wait(3000)
+      
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //verify that changes immediately reflect
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(4)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('exist')
+            .and('contain', '1 task')
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Add New SI-Design Task')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This is for SI-DESIGN Task Description')
+        })
+
+      //Click the Delete button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(4) > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(2)')
+        .click()
+        .wait(3000)
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //verify there is no more '1 task' label
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(4)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('not.contain', '1 task')
+        })
+
+      //verify that it is not visible except for 'No Items
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(4) > div:nth-child(2) > p')
+        .should('exist')
+        .and('have.text', 'No Items')
+
+      ////////// SI-Design ASSERTIONS ENDS HERE /////////////
+
+      //Click Add button next beside the Tasks
+      cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+      .find(' > button')
+      .click()
+      .wait(1000)
+
+      //Enter task Name for SI-Operation
+      cy.get('input[name="title"]')
+        .should('exist')
+        .clear()
+        .type('Adding new task ADMIN')
+        .wait(700)
+        .should('have.value', 'Adding new task ADMIN')
+
+      //Enter Task Description
+      cy.get('input[name="description"]')
+        .should('exist')
+        .clear()
+        .type('This description is just for testing purposes only')
+        .wait(700)
+        .should('have.value', 'This description is just for testing purposes only')
+
+      //Select SI-DESIGN IN THE DEPARTMENT drop down menu
+      cy.get('select[name="department"]')
+        .should('exist')
+        .select('SI-ADMIN')
+        .wait(700)
+
+      //Click the check/submit/save button
+      cy.get('div.grid > div > button:nth-child(1)')
+        .should('exist')
+        .click()
+        .wait(3000)
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+    
+      //verify now at SI-ADMIN
+      ////////// SI-Admin ASSERTIONS STARTS HERE /////////////
+
+      //Click the SI-Admin - it should reveal additional within element
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(5)')
+      .click()
+      .wait(1000)
+
+        //verify SI-Admin
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(5)')
+          .should('exist')
+          .within(()=>{
+            //assert 1 task
+            cy.get(' > div > div > p')
+              .should('exist')
+              .and('contain', '1 task')
+            //assert Task Name
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+              .should('exist')
+              .and('have.text', 'Adding new task ADMIN')
+            //assert Task Description
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+              .should('exist')
+              .and('have.text', 'This description is just for testing purposes only')
+            //assert SI-Admin Department
+            cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(3) > p')
+              .should('exist')
+              .and('have.text', 'SI-ADMIN')
+              .and('have.css', 'color', 'rgb(216, 91, 91)') //text color
+              .and('have.css', 'background-color', 'rgb(255, 229, 229)')
+              .and('have.css', 'border-radius', '40px')
+            //assert Edit button
+            cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(1)')
+              .should('exist')
+              .and('not.be.disabled')
+              .and('have.css', 'background-color', 'rgb(0, 47, 93)')
+              .and('have.css', 'border-radius', '10px')
+              .find('svg').should('have.css', 'color', 'rgb(255, 255, 255)')
+            //assert Delete button
+            cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(2)')
+              .should('exist')
+              .and('not.be.disabled')
+              .and('have.css', 'background-color', 'rgb(255, 255, 255)')
+              .and('have.css', 'border-radius', '10px')
+              .and('have.css', 'border-color', 'rgb(148, 148, 148)')
+              .find('svg').should('have.css', 'color', 'rgb(148, 148, 148)')
+          })
+
+        //Click the Edit button
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(5) > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(1)')
+          .click()
+          .wait(1000)
+
+        //Edit Task Name and Task Description
+        cy.get('form > div.py-4 > div')
+          .within(()=>{
+            //Edit Task Name
+            cy.get(' > div:nth-child(1) > input[name="title"]')
+              .should('exist')
+              .and('not.be.disabled')
+              .clear()
+              .type('Add New SI-Admin Task')
+              .wait(700)
+              .should('have.value', 'Add New SI-Admin Task')
+            //Edit Task Description
+            cy.get(' > div:nth-child(2) > input[name="description"]')
+              .should('exist')
+              .and('not.be.disabled')
+              .clear()
+              .type('This is for SI-ADMIN Task Description')
+              .wait(700)
+              .should('have.value', 'This is for SI-ADMIN Task Description')
+          })
+
+        //Click the check/submit/save button
+        cy.get('form > div.py-4 > div > div:nth-child(4) > button:nth-child(1)')
+          .click()
+          .wait(3000)
+        
+        //then simulate pressing esc key in your keyboard
+        cy.get('body').type('{esc}');
+        cy.wait(3000)
+
+        //verify that it reflect immediately the changes
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(5)')
+          .should('exist')
+          .within(()=>{
+            //assert 1 task
+            cy.get(' > div > div > p')
+              .should('exist')
+              .and('contain', '1 task')
+            //assert Task Name
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+              .should('exist')
+              .and('have.text', 'Add New SI-Admin Task')
+            //assert Task Description
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+              .should('exist')
+              .and('have.text', 'This is for SI-ADMIN Task Description')
+          })
+
+        //Click the Delete button
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(5) > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(2)')
+          .click()
+          .wait(3000)
+
+        //then simulate pressing esc key in your keyboard
+        cy.get('body').type('{esc}');
+        cy.wait(3000)
+
+        //verify that there is no more 1 task label
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(5)')
+          .should('exist')
+          .within(()=>{
+            //assert 1 task
+            cy.get(' > div > div > p')
+              .should('exist')
+              .and('not.contain', '1 task')
+          })
+        
+        //verify that it is not visible except for 'No Items
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(5) > div:nth-child(2) > p')
+          .should('exist')
+          .and('have.text', 'No Items')
+        
+        ////////// SI-Admin ASSERTIONS ENDS HERE /////////////
+
+        //Click Add button next beside the Tasks
+        cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+          .find(' > button')
+          .click()
+          .wait(1000)
+
+        //Enter task Name for SI-Operation
+        cy.get('input[name="title"]')
+          .should('exist')
+          .clear()
+          .type('Adding new task BILLING')
+          .wait(700)
+          .should('have.value', 'Adding new task BILLING')
+
+        //Enter Task Description
+        cy.get('input[name="description"]')
+          .should('exist')
+          .clear()
+          .type('This description is just for testing purposes only')
+          .wait(700)
+          .should('have.value', 'This description is just for testing purposes only')
+
+        //Select BILLING IN THE DEPARTMENT drop down menu
+        cy.get('select[name="department"]')
+          .should('exist')
+          .select('BILLING')
+          .wait(700)
+
+        //Click the check/submit/save button
+        cy.get('div.grid > div > button:nth-child(1)')
+          .should('exist')
+          .click()
+          .wait(3000)
+
+        //then simulate pressing esc key in your keyboard
+        cy.get('body').type('{esc}');
+        cy.wait(3000)
+      
+        //verify now at SI-BILLING
+        ////////// Billing ASSERTIONS STARTS HERE ////////////
+
+        //Click Billing - it should reveal additional within element
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(6)')
+          .click()
+          .wait(1000)
+
+        //verify Billing
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(6)')
+          .should('exist')
+          .within(()=>{
+            //assert 1 task
+            cy.get(' > div > div > p')
+              .should('exist')
+              .and('contain', '1 task')
+            //assert Task Name
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+              .should('exist')
+              .and('have.text', 'Adding new task BILLING')
+            //assert Task Description
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+              .should('exist')
+              .and('have.text', 'This description is just for testing purposes only')
+            //assert BILLING Department
+            cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(3) > p')
+              .should('exist')
+              .and('have.text', 'BILLING')
+              .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+              .and('have.css', 'background-color', 'rgb(207, 255, 221)')
+              .and('have.css', 'border-radius', '40px')
+            //assert Edit button
+            cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(1)')
+              .should('exist')
+              .and('not.be.disabled')
+              .and('have.css', 'background-color', 'rgb(0, 47, 93)')
+              .and('have.css', 'border-radius', '10px')
+              .find('svg').should('have.css', 'color', 'rgb(255, 255, 255)')
+            //assert Delete button
+            cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(2)')
+              .should('exist')
+              .and('not.be.disabled')
+              .and('have.css', 'background-color', 'rgb(255, 255, 255)')
+              .and('have.css', 'border-radius', '10px')
+              .and('have.css', 'border-color', 'rgb(148, 148, 148)')
+              .find('svg').should('have.css', 'color', 'rgb(148, 148, 148)')
+          })
+
+        //Click Edit Button
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(6) > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(1)')
+          .click()
+          .wait(1000)
+
+        //Edit Task Name and Task Description
+        cy.get('form > div.py-4 > div')
+          .within(()=>{
+            //Edit Task Name
+            cy.get(' > div:nth-child(1) > input[name="title"]')
+              .should('exist')
+              .and('not.be.disabled')
+              .clear()
+              .type('Add New Billing Task')
+              .wait(700)
+              .should('have.value', 'Add New Billing Task')
+            //Edit Task Description
+            cy.get(' > div:nth-child(2) > input[name="description"]')
+              .should('exist')
+              .and('not.be.disabled')
+              .clear()
+              .type('This is for BILLING Task Description')
+              .wait(700)
+              .should('have.value', 'This is for BILLING Task Description')
+          })
+
+        //Click the check/submit/save button
+        cy.get('form > div.py-4 > div > div:nth-child(4) > button:nth-child(1)')
+          .click()
+          .wait(3000)
+        
+        //then simulate pressing esc key in your keyboard
+        cy.get('body').type('{esc}');
+        cy.wait(3000)
+
+        //verify changes reflect immediately 
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(6)')
+          .should('exist')
+          .within(()=>{
+            //assert 1 task
+            cy.get(' > div > div > p')
+              .should('exist')
+              .and('contain', '1 task')
+            //assert Task Name
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+              .should('exist')
+              .and('have.text', 'Add New Billing Task')
+            //assert Task Description
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+              .should('exist')
+              .and('have.text', 'This is for BILLING Task Description')
+          })
+
+        //Click the Delete button
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(6) > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(2)')
+          .click()
+          .wait(3000)
+
+        //then simulate pressing esc key in your keyboard
+        cy.get('body').type('{esc}');
+        cy.wait(3000)
+
+        //verify no more '1 task'
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(6)')
+          .should('exist')
+          .within(()=>{
+            //assert 1 task
+            cy.get(' > div > div > p')
+              .should('exist')
+              .and('not.contain', '1 task')
+          })
+
+        //verify that it is not visible except for 'No Items
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(6) > div:nth-child(2) > p')
+          .should('exist')
+          .and('have.text', 'No Items')
+
+        ////////// Billing ASSERTIONS ENDS HERE /////////////
+
+        //Click Add button next beside the Tasks
+        cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+          .find(' > button')
+          .click()
+          .wait(1000)
+
+        //Enter task Name for SI-Operation
+        cy.get('input[name="title"]')
+          .should('exist')
+          .clear()
+          .type('Adding new task SALES')
+          .wait(700)
+          .should('have.value', 'Adding new task SALES')
+
+        //Enter Task Description
+        cy.get('input[name="description"]')
+          .should('exist')
+          .clear()
+          .type('This description is just for testing purposes only')
+          .wait(700)
+          .should('have.value', 'This description is just for testing purposes only')
+
+        //Select SALES IN THE DEPARTMENT drop down menu
+        cy.get('select[name="department"]')
+          .should('exist')
+          .select('SALES')
+          .wait(700)
+
+        //Click the check/submit/save button
+        cy.get('div.grid > div > button:nth-child(1)')
+          .should('exist')
+          .click()
+          .wait(3000)
+
+        //then simulate pressing esc key in your keyboard
+        cy.get('body').type('{esc}');
+        cy.wait(3000)
+      
+        //verify now at SALES
+        ////////// Sales ASSERTIONS STARTS HERE /////////////
+
+        //Click again Sales - it should hide the additional elements within
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(7)')
+          .find(' > div > div > div')
+          .click()
+          .wait(1000)
+
+        //verify Sales
+        cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(7)')
+          .should('exist')
+          .within(()=>{
+            //assert 1 task
+            cy.get(' > div > div > p')
+              .should('exist')
+              .and('contain', '1 task')
+            //assert Task Name
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+              .should('exist')
+              .and('have.text', 'Adding new task SALES')
+            //assert Task Description
+            cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+              .should('exist')
+              .and('have.text', 'This description is just for testing purposes only')
+            //assert SALES Department
+            cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(3) > p')
+              .should('exist')
+              .and('have.text', 'SALES')
+              .and('have.css', 'color', 'rgb(195, 0, 0)') //text color
+              .and('have.css', 'background-color', 'rgb(255, 175, 175)')
+              .and('have.css', 'border-radius', '40px')
+            //assert Edit button
+            cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(1)')
+              .should('exist')
+              .and('not.be.disabled')
+              .and('have.css', 'background-color', 'rgb(0, 47, 93)')
+              .and('have.css', 'border-radius', '10px')
+              .find('svg').should('have.css', 'color', 'rgb(255, 255, 255)')
+            //assert Delete button
+            cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(2)')
+              .should('exist')
+              .and('not.be.disabled')
+              .and('have.css', 'background-color', 'rgb(255, 255, 255)')
+              .and('have.css', 'border-radius', '10px')
+              .and('have.css', 'border-color', 'rgb(148, 148, 148)')
+              .find('svg').should('have.css', 'color', 'rgb(148, 148, 148)')
+          })
+
+      //Click Edit button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(7) > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(1)')
+        .click()
+        .wait(1000)
+
+      //Edit Task Name and Task Description
+      cy.get('form > div.py-4 > div')
+        .within(()=>{
+          //Edit Task Name
+          cy.get(' > div:nth-child(1) > input[name="title"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('Add New Sales Task')
+            .wait(700)
+            .should('have.value', 'Add New Sales Task')
+          //Edit Task Description
+          cy.get(' > div:nth-child(2) > input[name="description"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('This is for SALES Task Description')
+            .wait(700)
+            .should('have.value', 'This is for SALES Task Description')
+        })
+      
+      //Click the check/submit/save button
+      cy.get('form > div.py-4 > div > div:nth-child(4) > button:nth-child(1)')
+        .click()
+        .wait(3000)
+    
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+      
+      //verify changes reflect immediately
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(7)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('exist')
+            .and('contain', '1 task')
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Add New Sales Task')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This is for SALES Task Description')
+        })
+
+      //Click Delete button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(7) > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(2)')
+        .click()
+        .wait(3000)
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //verify there is no more '1 task'
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(7)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('exist')
+            .and('not.contain', '1 task')
+        })
+
+      //verify that it is not visible except for 'No Items
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(7) > div:nth-child(2) > p')
+        .should('exist')
+        .and('have.text', 'No Items')
+
+      ////////// Sales ASSERTIONS ENDS HERE /////////////
+
+      //Click Add button next beside the Tasks
+      cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+        .find(' > button')
+        .click()
+        .wait(1000)
+
+      //Enter task Name for SI-Operation
+      cy.get('input[name="title"]')
+        .should('exist')
+        .clear()
+        .type('Adding new task LEAD GENERATION')
+        .wait(700)
+        .should('have.value', 'Adding new task LEAD GENERATION')
+
+      //Enter Task Description
+      cy.get('input[name="description"]')
+        .should('exist')
+        .clear()
+        .type('This description is just for testing purposes only')
+        .wait(700)
+        .should('have.value', 'This description is just for testing purposes only')
+
+      //Select LEAD_GENERATION IN THE DEPARTMENT drop down menu
+      cy.get('select[name="department"]')
+        .should('exist')
+        .select('LEAD_GENERATION')
+        .wait(700)
+
+      //Click the check/submit/save button
+      cy.get('div.grid > div > button:nth-child(1)')
+        .should('exist')
+        .click()
+        .wait(3000)
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+      
+      //verify now at LEAD GENERATION
+      ////////// Lead Generation ASSERTIONS STARTS HERE /////////////
+
+      //Click Lead Generation - it should reveal additional within element
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(8)')
+        .click()
+        .wait(1000)
+
+      //verify Lead Generation
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(8)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('exist')
+            .and('contain', '1 task')
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Adding new task LEAD GENERATION')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This description is just for testing purposes only')
+          //assert LEAD GENERATION Department
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(3) > p')
+            .should('exist')
+            .and('have.text', 'LEAD_GENERATION')
+            .and('have.css', 'color', 'rgb(212, 130, 54)') //text color
+            .and('have.css', 'background-color', 'rgb(255, 210, 185)')
+            .and('have.css', 'border-radius', '40px')
+          //assert Edit button
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(1)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'background-color', 'rgb(0, 47, 93)')
+            .and('have.css', 'border-radius', '10px')
+            .find('svg').should('have.css', 'color', 'rgb(255, 255, 255)')
+          //assert Delete button
+          cy.get(' > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(2)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'background-color', 'rgb(255, 255, 255)')
+            .and('have.css', 'border-radius', '10px')
+            .and('have.css', 'border-color', 'rgb(148, 148, 148)')
+            .find('svg').should('have.css', 'color', 'rgb(148, 148, 148)')
+        })
+
+      //Click Edit button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(8) > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(1)')
+        .click()
+        .wait(1000)
+
+      //Edit Task Name and Task Description
+      cy.get('form > div.py-4 > div')
+        .within(()=>{
+          //Edit Task Name
+          cy.get(' > div:nth-child(1) > input[name="title"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('Add New Lead Generation Task')
+            .wait(700)
+            .should('have.value', 'Add New Lead Generation Task')
+          //Edit Task Description
+          cy.get(' > div:nth-child(2) > input[name="description"]')
+            .should('exist')
+            .and('not.be.disabled')
+            .clear()
+            .type('This is for LEAD GENERATION Task Description')
+            .wait(700)
+            .should('have.value', 'This is for LEAD GENERATION Task Description')
+        })
+
+      //Click the check/submit/save button
+      cy.get('form > div.py-4 > div > div:nth-child(4) > button:nth-child(1)')
+        .click()
+        .wait(3000)
+    
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //verify changes reflect immediately
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(8)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('exist')
+            .and('contain', '1 task')
+          //assert Task Name
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Add New Lead Generation Task')
+          //assert Task Description
+          cy.get(' > div:nth-child(2) > div > div > div > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This is for LEAD GENERATION Task Description')
+        })
+
+      //Click Delete button
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(8) > div:nth-child(2) > div > div > div > div:nth-child(4) > button:nth-child(2)')
+        .click()
+        .wait(3000)
+
+      //verify there is no more '1 task'
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(8)')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > div > div > p')
+            .should('exist')
+            .and('not.contain', '1 task')
+        })
+
+      //verify that it is not visible except for 'No Items
+      cy.get('div.space-y-8 > div.space-y-8 > div:nth-child(8) > div:nth-child(2) > p')
+      .should('exist')
+      .and('have.text', 'No Items')
+
+      ////////// Lead Generation ASSERTIONS ENDS HERE /////////////
+
+    })
 
     // **** CLIENT ADMIN TASK MANAGEMENT ENDS HERE ***
 })
