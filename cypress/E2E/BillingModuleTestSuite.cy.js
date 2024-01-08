@@ -1,5 +1,7 @@
 /// <reference types="cypress" />
 import UpsellItems from "../pageObjects/BillingUpsellItemsTableAssertions.js"
+import UpsellTablelist from "../pageObjects/ClientUpsellTableAssertions.js"
+import GetDate from "../pageObjects/callingDateVariations.js"
 
 let testdata;
 let loginmodule;
@@ -59,11 +61,14 @@ beforeEach('Launch BS Login Page',()=>{
 
 describe('Billing Module Test Suite',()=>{
 
-
     //calling BillingUpsellItemsTableAssertions
     const UpsellItemAddonItem = new UpsellItems();
+    //calling ClientUpsellTableAssertions
+    const UpsellTable = new UpsellTablelist();
+    //calling callingDateVariations
+    const DateTodayIs = new GetDate();
 
-
+    // **** BILLING UPSELL ITEMS STARTS HERE ***
     it('Testcase ID: BUI0001 - Add Addons/Upsell Items', ()=>{
 
         //Login using account specialist
@@ -769,7 +774,167 @@ describe('Billing Module Test Suite',()=>{
 
         //verify alert-success message popup 
         cy.GETAlertMessagepopup(alertmessagepopup.TopMessage, 'Invoice item deleted')
-    })
 
+        //verify in the table that it is totally deleted
+    })
+    it('Testcase ID: BUI0005 - Verify that Addon/Upsell Items cannot be deleted when it is currently in use in a transaction', ()=>{
+
+       //Login using account specialist
+       cy.userlogin(loginmodule.EmailAddressInputfield, loginmodule.PasswordInputfield, loginmodule.SigninButton, testdata.userAccounts[0].accountspecialist1, testdata.userAccounts[0].accountspecialistandprojectmanagerpassword)
+      
+       //Click the Clients Navigation Module
+       cy.get(modulebutton.ClientsModuleButton)
+         .click()
+         .wait(2000) 
+ 
+       //Then click then client name link text
+       cy.get('table > tbody > tr:first-child > td:nth-child(1) > a')
+         .click()
+         .wait(3000)
+ 
+       //click the billing tab
+       cy.get(clientmodulelocator.ClientMainPageTab[0].BillingTab)
+         .click()
+         .wait(2000)
+ 
+       // Click the Upsells sub tab
+       cy.get(clientmodulelocator.BillingTabPage[0].PageTabs[0].UpsellsTab)
+         .click()
+         .wait(2000)
+        
+       //Click the Create Upsell button
+       cy.get(clientmodulelocator.BillingTabPage[0].UpsellsTabpage[0].CreateUpsellButton)
+         .click()
+         .wait(2000)
+         
+       //verify the Create Upsell modal
+       cy.get(clientmodulelocator.BillingTabPage[0].UpsellsTabpage[0].CreateUpsellModal[0].modal)
+         .should('exist')
+ 
+       ///////// CREATE UPSELL REQUEST STARTS HERE //////////////
+ 
+       //Select Upsell item - Copywriting Work
+       cy.get(clientmodulelocator.BillingTabPage[0].UpsellsTabpage[0].CreateUpsellModal[0].UpsellitemAndSelectDropdownmenu)
+         .find('select')
+         .should('exist')
+         .select('1604151000000147020')
+         .wait(1000)
+         .should('have.value', '1604151000000147020')
+ 
+       //verify that it goes on top option 1
+       cy.get(clientmodulelocator.BillingTabPage[0].UpsellsTabpage[0].CreateUpsellModal[0].UpsellitemAndSelectDropdownmenu)
+         .find('select option:selected')
+         .should('exist')
+         .wait(1000)
+         .should('have.text', 'Copywriting Work')
+ 
+       //verify Unit Price value updated
+       cy.get(clientmodulelocator.BillingTabPage[0].UpsellsTabpage[0].CreateUpsellModal[0].UnitPricelabelAndInputfield)
+         .find('.relative > input')
+         .should('exist')
+         .wait(1000)
+         .should('have.value', '97.95')
+ 
+       //verify Upsell Description value updated
+       cy.get(clientmodulelocator.BillingTabPage[0].UpsellsTabpage[0].CreateUpsellModal[0].UpsellDescriptionlabelAndTextareafield)
+         .find('textarea')
+         .should('exist')
+         .wait(1000)
+         .should('have.value', 'Copywriting Work')
+         
+       //Click Submit Button
+      cy.get(clientmodulelocator.BillingTabPage[0].UpsellsTabpage[0].CreateUpsellModal[0].SubmitButton)
+        .click()
+        .wait(8000)
+
+       ///////// CREATE UPSELL REQUEST ENDS HERE //////////////
+        
+       /////// CLIENT > BILLING > UPSELLS TAB > TABLE VERFICATION STARTS HERE /////////////
+ 
+       cy.get('table > tbody > tr:first-child').within(()=>{
+        //assert Row 1 column 1 name Service
+        UpsellTable.assertColumn1ServiceName(' > td:nth-child(1) > button', 'Copywriting Work')
+        //assert Row 1 column 2 name Invoice
+        UpsellTable.assertColumn2InvoiceNumber(' > td:nth-child(2)', '—') 
+        //assert Row 1 column 3 name Amount
+        UpsellTable.assertColumn3Amount(' > td:nth-child(3) > span', '$ 97.95')
+        //assert Row 1 column 4 name Status
+        UpsellTable.assertColumn4Status(' > td:nth-child(4) > span', 'awaiting approval', 'rgb(212, 130, 54)', 'rgb(255, 210, 185)')
+        //assert Row 1 column 5 name Date
+        UpsellTable.assertColumn5Date(' > td:nth-child(5) > span', DateTodayIs.TodayDateDDMMYYYY())
+        //assert Row 1 column 6 name Submitted By
+        UpsellTable.assertColumn6Submittedby(' > td:nth-child(6) > div', 'LP', 'LoganPaul')
+        //assert Row 1 column 7 name Updated By
+        UpsellTable.assertColumn7UpdatedbyExpectedDASH(' > td:nth-child(7)', '—')
+        //assert Row 1 column 8 name Action - has edit button
+        UpsellTable.assertColumn8Action(' > td:nth-child(8) > button', 'be.disabled', 'View')
+      }) 
+ 
+       /////// CLIENT > BILLING > UPSELLS TAB > TABLE VERFICATION ENDS HERE /////////////
+       
+       //Then go to Billing > Upsell Items
+       //Click the Billing Navigation Module
+       cy.get(modulebutton.BillingModuleButton)
+         .click()
+         .wait(2000) 
+        
+       //verify Upsell Items link text folder, click if found
+       cy.get(linktextfolder.BillingModule[0].UpsellItems)
+         .should('exist')
+         .and('not.be.disabled')
+         .and('have.text', 'Upsell Items')
+         .click()
+         .wait(1000)
+
+       //verify expected url destination
+       cy.url().should('contain', '/addons')
+     
+       //Find the CopyWriting work upsell item and attempt to delete in the table list which at the time of this making
+       // it resides at row 5
+       cy.get('table > tbody > tr:nth-child(5) > td:nth-child(1)')
+         .should('have.text', 'Copywriting Work')
+         .then(()=>{
+          cy.get('table > tbody > tr:nth-child(5) > td:nth-child(6)')
+            .find('button:nth-child(2)').click().wait(2000)
+
+            //verify Confirm Delete Item modal popup
+            cy.get(billingmodulelocator.UpsellItemsPage[0].ConfirmDeleteItemModal[0].modal)
+              .should('exist')
+
+            //verify Yes Button inside the Confirm Delete Item modal - and click if Found
+            cy.get(billingmodulelocator.UpsellItemsPage[0].ConfirmDeleteItemModal[0].YesButton)
+              .should('exist')
+              .click()
+              .wait(3000)
+
+            //verify alert-error message popup
+            cy.GETAlertMessagepopup(alertmessagepopup.TopMessage, 'Failed to delete invoice item')
+            cy.GETAlertMessagepopup(alertmessagepopup.SubMessage, 'The addon has transactions and hence it cannot be deleted.')
+         })
+
+
+       /*
+       cy.get('table > tbody > tr').each(($row, index)=>{
+         cy.wrap($row).within(()=>{
+            cy.get('td').eq(0).invoke('text').then((text)=>{
+              //if the text [Copywriting Work] is found in the first column, click the delete button at Action column of it
+              if(text.trim() == 'Copywriting Work')
+              {
+                cy.log(` Copywriting Work is found at row = ${index} - start count is zero`)
+                cy.get('td').eq(5).find('button:nth-child(2)')
+                  .click()
+                  .wait(3000)
+                cy.get('div.min-h-screen > div.inline-block')
+                  .should('exist')
+              }
+          })
+         })
+       }) */
+
+         
+  
+
+    })
+    // **** BILLING UPSELL ITEMS ENDS HERE ***
 
 })
