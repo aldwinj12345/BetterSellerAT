@@ -9,6 +9,7 @@ import ClientBillingInvoiceHistoryTable from "../pageObjects/ClientBillingInvoic
 import ForTerminationTable from "../pageObjects/ForTerminationTable.js"
 import InactiveClientsTableList from "../pageObjects/InactiveClientsTableAssertions.js"
 import TaskManagementTable from "../pageObjects/TaskManagementTableAssertions.js"
+import ActiveClientpageTable from "../pageObjects/ActiveClientPageTaskTabTableAssertions.js"
 import GetDate from "../pageObjects/callingDateVariations.js"
 
 
@@ -115,6 +116,8 @@ describe('Login Module Test Suite',()=>{
     const InactiveClientsTable = new InactiveClientsTableList();
     //calling TaskManagementTableAssertions
     const TaskManagementTableList = new TaskManagementTable();
+    //calling ActiveClientPageTaskTabTableAssertions
+    const ClientPageTaskTabTable = new ActiveClientpageTable();
 
     it('Testcase ID: CP0001 - Verify when user click onto the client name, it will redirect to the client profile page', ()=>{
 
@@ -847,173 +850,68 @@ describe('Login Module Test Suite',()=>{
      // **** CLIENT DASHBOARD FILE STARTS HERE ***
     it.skip("Testcase ID: CDF0001 - Verify user can Upload file", ()=>{
 
+      //Login using account specialist
+      cy.userlogin(loginmodule.EmailAddressInputfield, loginmodule.PasswordInputfield, loginmodule.SigninButton, testdata.userAccounts[0].accountspecialist1, testdata.userAccounts[0].accountspecialistandprojectmanagerpassword)
 
-      //calling utility functions
-  const utilfunc = new utilityfunctions();
+      //Click the Clients Navigation Module
+      cy.get(modulebutton.ClientsModuleButton)
+        .click()
+        .wait(2000) 
 
-      //login using admin role account
-  cy.userloginaccount(loginmodules.loginform[0].emailaddressinputfield, loginmodules.loginform[0].passwordinputfield, loginmodules.loginform[0].signinbutton, useraccountdata.accountspecialist, useraccountdata.accountspecialistandprojectmanagerpassword)
+      //Then click then client name link text
+      cy.get('table > tbody > tr:first-child > td:nth-child(1) > a')
+        .click()
+        .wait(3000)
 
-      //click the first top client test in the active client listing AAAROO TEST
-  cy.click_link_button(clientmodules.testclient)
-    .wait(2000)
-
-      //At the stage, it is already accessed to Client Dashboard Tab
-      //verify if under the Client Dashboard Tab there is a Files Tab
-  cy.get(clientmodules.clientdashboardtab[3].filestablink)
-    .should('exist')
-    .and('be.visible')
-    .and('have.text', ' Files')
-    .and('not.be.disabled')
-    .and('have.css', 'color', 'rgb(156, 163, 175)')  //font text color
-    .then(($el) => {
-      const computedStyle       = getComputedStyle($el[0]);
-      const customPropertyValue = computedStyle.getPropertyValue('--tw-text-opacity').trim();
-      expect(customPropertyValue).to.equal('1')
-    })
-
-      //click the Files tab
-  cy.click_link_button(clientmodules.clientdashboardtab[3].filestablink)
-    .wait(2000)
-    /*
-      //verify url destination
-  cy.url().should('contain', '/files')
-
-      //verify that the files tab font color to signify that is currently accessed, the color is red
-  cy.get(clientmodules.clientdashboardtab[3].filestablink)
-    .should('have.css', 'color', 'rgb(239, 68, 68)')  //font text color
-
-      //verify files tab main title page
-  cy.get(clientmodules.clientdashboardtab[3].filestabmaintitle)
-    .should('exist')
-    .and('be.visible')
-    .and('have.text', 'Uploaded Files')
-    .and('have.css', 'font-weight', '700')  // font bold
-
-      //verify there is the upload element section with label says Drop file or click to select
-  cy.get('div.file-drop-target > div')
-    .should('exist')
-    .and('be.visible')
-    .and('not.be.disabled')
-    .then(()=>{ 
-          //assert the label
-      cy.get(clientmodules.clientdashboardtab[3].dropfileorclicktoselectuploadlabel)
+      //Click the Files Tab
+      cy.get(clientmodulelocator.ClientDashboardTabPage[0].PageTabs[0].FilesTab)
         .should('exist')
-        .and('be.visible')
-        .and('have.text', 'Drop file or click to select')
-        .then(($el) => {
-          const computedStyle       = getComputedStyle($el[0]);
-          const customPropertyValue = computedStyle.getPropertyValue('--tw-text-opacity').trim();
-          expect(customPropertyValue).to.equal('1')
-        })
-    })
+        .click()
+        .wait(2000)
 
-      //verify the grid view mode button
-  cy.get(clientmodules.clientdashboardtab[3].gridmodebutton)
-    .should('exist')
-    .and('be.visible')
-    .and('not.be.disabled')
-    .and('have.css', 'color', 'rgb(239, 68, 68)')  //color is red by default since when you first access the Files tab the grid_view mode is set
+      //verify url expected destination
+      cy.url().should('contain', '/dashboard/files')
 
-      //verify the list view mode button
-  cy.get(clientmodules.clientdashboardtab[3].listmodebutton)
-    .should('exist')
-    .and('be.visible')
-    .and('not.be.disabled')
-    .and('have.css', 'color', 'rgb(0, 0, 0)')  //color is black
+      //verify page title
+      cy.get(clientmodulelocator.ClientDashboardTabPage[0].FilesTabpage[0].pageTitle)
+        .should('exist')
+        .and('have.text', 'Uploaded Files')
+        .and('have.css', 'font-weight', '700') //font bold
 
-      //click the List view mode button
-  cy.click_link_button(clientmodules.clientdashboardtab[3].listmodebutton)
-    .wait(1000)
+      //verify Drop file or click to select elements
+      cy.get('div.file-drop > div.file-drop-target')
+        .should('exist')
+        .find(' div > div > span').should('have.text', 'Drop file or click to select')
 
-      //verify that the grid view color changes to black and the list view mode button is red
-  cy.get(clientmodules.clientdashboardtab[3].gridmodebutton)
-    .should('exist')
-    .and('be.visible')
-    .and('not.be.disabled')
-    .and('have.css', 'color', 'rgb(0, 0, 0)')
-  cy.get(clientmodules.clientdashboardtab[3].listmodebutton)
-    .should('exist')
-    .and('be.visible')
-    .and('not.be.disabled')
-    .and('have.css', 'color', 'rgb(239, 68, 68)')
+      //verify the Grid View element which by default should be enabled or set
+      cy.get('div.space-x-1 > div:nth-child(1) > button')
+        .should('exist')
+        .and('not.be.disabled')
+        .find('span').should('have.css', 'color', 'rgb(239, 68, 68)') //color is somewhat red signify that it is enabled 
 
-      //click again the Grid view mode button
-  cy.click_link_button(clientmodules.clientdashboardtab[3].gridmodebutton)
-    .wait(1000)
-
-      ///////////////// UPLOAD FILE ASSERTIONS STARTS HERE ////////////////////////`
-      //upload a *jpeg file
-  cy.get(clientmodules.clientdashboardtab[3].uploadafileuploadinput).attachFile('bol g.jpg')
-    .wait(1000)
-
-      //verify if Upload attachments appears after a successful partial upload of a file from the local drive
-  cy.get(clientmodules.clientdashboardtab[3].uploadattachmentsbutton)
-    .should('exist')
-    .and('be.visible')
-    .and('have.css', 'color', 'rgb(255, 255, 255)') //font color
-    .and('have.css', 'background-color', 'rgb(5, 150, 105)') //background color that shape like a capsule
-    .and('have.css', 'border-radius', '6px') // the corner edge of the button
-    .and('have.css', 'width', '153.375px')
-    .and('have.css', 'height', '38px')
-    .and('have.text', 'Upload Attachments')
-
-  //click the Upload Attachments button
-  cy.click_link_button(clientmodules.clientdashboardtab[3].uploadattachmentsbutton)
-    .wait(2000)
+      //verify List View element
+      cy.get('div.space-x-1 > div:nth-child(2) > button')
+        .should('exist')
+        .and('not.be.disabled')
+        .find('span').should('have.css', 'color', 'rgb(0, 0, 0)') //color is somewhat red signify that it is enabled 
 
 
-      //verify alert-success message popup
-  cy.getMessagepopup(alertmessageslocators.updatesuccessmessagepopup, 'File uploaded')
-  cy.getMessagepopup(alertmessageslocators.updatemessage, 'AgencyClient Attachment has been successfully uploaded and created.')
-    
 
-      //verify if the uploaded image is at row 1, exist in DOM and visible in page
-  cy.get('div.gap-x-6 > div.grid > div').should('exist').then(()=>{
-      //verify image 
-    cy.get('div.mb-5 > div.bg-gray-200 > img')
-      .should('exist')
-      .and('be.visible')
-      .and('have.css', 'width', '162.1875px') //expected weight size displayed
-      .and('have.css', 'height', '104.59375px') //expected height size displayed
-      //verify the initial of the the uploader - account specialist
-    cy.get('div.mb-5 > span.bg-green-text')
-      .should('exist')
-      .and('be.visible')
-      .and('have.css', 'color', 'rgb(255, 255, 255)') //text color of the initial
-      .and('have.css', 'background-color', 'rgb(94, 169, 98)') // background green circle color of the initial
-      .and('have.css', 'border-radius', '24px') //expected shape of the background is circle
-      .and('have.css', 'text-transform', 'uppercase') //the displayed initial is all caps
-      .and('have.text', 'lm')
-      //verify the filename of the uploaded image
-    cy.get('div.col-span-1 > p.text-grayscale-900')
-      .should('exist')
-      .and('be.visible')
-      .and('have.text', 'bol g.jpg')
-      //verify date uploaded
-    cy.get('div.col-span-1 > p.text-grayscale-600')
-      .should('exist')
-      .and('be.visible')
-      .and('contains', utilfunc.getFormattedDateMonthDayyear) // the time is not included
-  }) */
-  cy.wait(2000)
-  //hover onto the image itself
-  cy.get('div.gap-x-6 > div.grid > div').realHover()
-    .wait(1000)
-    .then(()=>{
-      //verify if edit, download, copy to clipboard, and delete buttons visibly appear
-      cy.get('div.hidden > div.flex > div > button > svg').each(($button) => {
-        cy.wrap($button)
-          .should('exist')         // Assert that each buttons exists
-          .and('be.visible')    // Assert that each button is visible
-          .and('not.be.disabled');  // Assert that each button is not disabled
-      })
-    })
-  //click the list view
-  cy.click_link_button(clientmodules.clientdashboardtab[3].listmodebutton)
-    .wait(2000)
 
-  ///////////////// UPLOAD FILE ASSERTIONS ENDS HERE ////////////////////////
+
+
+
+      /*
+      //Upload a file image
+        cy.get('div.client-content > div.px-8 > div.gap-x-6 > div:nth-child(2)')
+        .should('exist')
+        .within(()=>{
+          //upload
+          cy.get('input')
+            .should('exist')
+            .attachFile('mansionOne.jpg')
+            .wait(3000)
+        }) */
 
     })
     it.skip("Testcase ID: CDF0002 - Verify user can Edit the filename of the uploaded file", ()=>{
@@ -24732,6 +24630,1119 @@ describe('Login Module Test Suite',()=>{
       .and('have.text', 'No Items')
 
       ////////// Lead Generation ASSERTIONS ENDS HERE /////////////
+
+    })
+    it("Testcase ID: CATM00011 - Add task to Existing Onboarding Template",()=>{
+
+      //Login using account specialist
+      cy.userlogin(loginmodule.EmailAddressInputfield, loginmodule.PasswordInputfield, loginmodule.SigninButton, testdata.userAccounts[0].accountspecialist1, testdata.userAccounts[0].accountspecialistandprojectmanagerpassword)
+      
+      //Click the Admin Navigation Module
+      cy.get(modulebutton.AdminModuleButton)
+        .click()
+        .wait(2000)
+        
+      //Click the Task Management link text folder
+      cy.get(linktextfolder.AdminModule[0].TaskManagement)
+        .click()
+        .wait(2000)
+      
+      //verify Add button - if found click
+      cy.get(adminmodulelocator.TaskManageementFolder[0].AddButton)
+        .should('exist')
+        .and('not.be.disabled')
+        .and('have.text', 'Add')
+        .and('have.css', 'color', 'rgb(0, 47, 93)') //text color
+        .and('have.css', 'border-color', 'rgb(0, 47, 93)')
+        .and('have.css', 'border-radius', '40px')
+        .click()
+        .wait(2000)
+
+      //verify Task List Creation Modal popup open
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].modal)
+        .should('exist')
+
+      //Click the Next Button
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].NextButton)
+        .click()
+        .wait(2000)
+
+      //////// CREATE EXISTING ONBOARDING STARTS HERE ///////////
+
+      //Now Enter Template Name
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].TemplateNameLabelandInputfield)
+        .find(' > input[name="name"]')
+        .clear()
+        .type('New Test Existing Onboarding Template')
+        .wait(600)
+        .should('have.value', 'New Test Existing Onboarding Template')
+
+      //Select New in Partner Type
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].PartnerTypeLabelandDropdownMenu)
+        .find(' > div > select[name="partnerType"]')
+        .select('existing')
+        .wait(600)
+
+      //verify that the selected option goes on top
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].PartnerTypeLabelandDropdownMenu)
+        .find('select option:selected')
+        .should('have.text', 'Existing')
+
+      //Select Service Category Full Account Management
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].WhichServiceCategoryWIllThisBeUsedLabelandDropdownMenu)
+        .find(' > select[name="partnerService"]')
+        .select('Full Account Management')
+        .wait(600)
+
+      //verify the selected service category goes on top
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].WhichServiceCategoryWIllThisBeUsedLabelandDropdownMenu)
+        .find('select option:selected')
+        .should('have.text', 'Full Account Management')
+
+      ///////// CREATE EXISTING ONBOARDING ENDS HERE ///////////
+
+      //Click Create Button
+      cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].CreateButton)
+        .click()
+        .wait(3000)
+
+      //verify alert-success modal popup
+      cy.get('div.overflow-y-auto > div.min-h-full')
+        .should('exist')
+        .within(()=>{
+          //assert check logo
+          cy.get(' > div > div > svg')
+            .should('exist')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+          //assert message
+          cy.get(' > div > div')
+            .should('exist')
+            .and('have.text', 'Template has been created.')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+            .and('have.css', 'font-weight', '400')  //font bold
+        })
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+        
+      //Go to Existing Onboarding
+      //Verify Existing Tab if Found then click
+      cy.get(adminmodulelocator.TaskManageementFolder[0].pageTab[0].ExistingTab)
+        .should('exist')
+        .click()
+        .wait(3000)
+
+      //Automatically it goes to Onboarding tab so no need to click the Onboarding Tab
+        
+      //////// TASK MANAGEMENT > NEW > ONBOARDING TABLE LIST ASSERTIONS STARTS HERE ////////////
+
+      cy.get('table > tbody > tr:first-child').within(()=>{
+        //assert Template Name
+        TaskManagementTableList.assertColumn1TemplateName(' > td:nth-child(1) > a', 'New Test Existing Onboarding Template')
+        //assert Partner Type
+        TaskManagementTableList.assertColumn2PartnerType(' > td:nth-child(2)', 'existing')
+        //assert Service Type
+        TaskManagementTableList.assertColumn3ServiceType(' > td:nth-child(3)', 'Full Account Management')
+        //assert Last Updated
+        TaskManagementTableList.assertColumn4LastUpdated(' > td:nth-child(4)', DateTodayIs.TodayDateMMDDYYYY_MonthisinWholeWordandDayiswithTH())
+        //assert Updated By
+        TaskManagementTableList.assertColumn5UpdatedBy(' > td:nth-child(5) > div', 'LP', 'Logan Paul')
+        //aasert Action:Edit
+        TaskManagementTableList.assertColumn6Action(' > td:nth-child(6) > a', 'not.be.disabled', 'Edit')
+      })
+
+      //////// TASK MANAGEMENT > NEW > ONBOARDING TABLE LIST ASSERTIONS ENDS HERE ////////////
+        
+      //CLick the Action Edit button
+      cy.get('table > tbody > tr:first-child > td:nth-child(6) > a')
+        .click()
+        .wait(3000)
+
+      //Click the Add button beside the Task title
+      cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+        .find(' > button')
+        .click()
+        .wait(1000)
+
+      //Enter task Name
+      cy.get('input[name="title"]')
+        .should('exist')
+        .clear()
+        .type('Adding Existing task One')
+        .wait(700)
+        .should('have.value', 'Adding Existing task One')
+
+      //Enter Task Description
+      cy.get('input[name="description"]')
+        .should('exist')
+        .clear()
+        .type('This description is just for testing purposes only')
+        .wait(700)
+        .should('have.value', 'This description is just for testing purposes only')
+
+      //Click the check/submit/save button
+      cy.get('div.grid > div > button:nth-child(1)')
+        .should('exist')
+        .click()
+        .wait(3000)
+      
+      //verify alert-success modal popup
+      cy.get('div.overflow-y-auto > div.min-h-full')
+        .should('exist')
+        .within(()=>{
+          //assert check logo
+          cy.get(' > div > div > svg')
+            .should('exist')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+          //assert message
+          cy.get(' > div > div')
+            .should('exist')
+            .and('have.text', 'Template has been created.')
+            .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+            .and('have.css', 'font-weight', '400')  //font bold
+        })
+
+      //then simulate pressing esc key in your keyboard
+      cy.get('body').type('{esc}');
+      cy.wait(3000)
+
+      //verify in the Onboarding task the total task created under it
+      cy.get('div.space-y-8 > div:nth-child(2) > div > div > div')
+        .should('exist')
+        .within(()=>{
+          //assert 1 task
+          cy.get(' > p > span:nth-child(2)')
+            .should('exist')
+            .and('have.text', '1 task')
+            .and('have.css', 'color', 'rgb(148, 148, 148)') //text color
+            .and('have.css', 'font-size', '11px')
+            .and('have.css', 'font-weight', '400')
+        })
+
+      //Click the '>' Onboarding tasks
+      cy.get('div.space-y-8 > div:nth-child(2) > div > div > div')
+        .find(' > div > svg')
+        .click()
+        .wait(3000)
+
+      //verify there would be Description column name
+      cy.get('div.font-inter > p:nth-child(2)')
+        .should('exist')
+        .and('have.text', 'Description')
+      //verify there would be Actions column name
+      cy.get('div.font-inter > p:nth-child(3)')
+        .should('exist')
+        .and('have.text', 'Actions')
+     
+      //verify the task name you just entered and the task description 
+      cy.get('div.bg-white > div.text-13 > div > div')
+        .should('exist')
+        .within(()=>{
+          //assert Task Name
+          cy.get(' > p:nth-child(1)')
+            .should('exist')
+            .and('have.text', 'Adding Existing task One')
+          //assert Task description
+          cy.get(' > p:nth-child(2)')
+            .should('exist')
+            .and('have.text', 'This description is just for testing purposes only')
+        })
+
+      //verify the edit and delete buttons
+      cy.get('div.bg-white > div.text-13 > div > div > div')
+        .should('exist')
+        .within(()=>{
+          //assert edit button
+          cy.get(' > button:nth-child(1)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'background-color', 'rgb(0, 47, 93)')
+            .and('have.css', 'border-radius', '10px')
+            .find('svg').should('have.css', 'color', 'rgb(255, 255, 255)')
+          //assert delete button
+          cy.get(' > button:nth-child(2)')
+            .should('exist')
+            .and('not.be.disabled')
+            .and('have.css', 'background-color', 'rgb(255, 255, 255)')
+            .and('have.css', 'border-color', 'rgb(148, 148, 148)')
+            .and('have.css', 'border-radius', '10px')
+            .find('svg').should('have.css', 'color', 'rgb(148, 148, 148)')
+        })
+        
+      //Now go to Clients Module > Active Client
+      //Click Clients navigation module button
+      cy.get(modulebutton.ClientsModuleButton)
+        .click()
+        .wait(2000)
+        
+      //Then click then client name link text
+      cy.get('table > tbody > tr:first-child > td:nth-child(1) > a')
+        .click()
+        .wait(3000)
+      
+      //Click Task tab
+      cy.get(clientmodulelocator.ClientMainPageTab[0].TasksTab)
+        .should('exist')
+        .click()
+        .wait(2000)
+
+      //verify url expected destination
+      cy.url().should('contain', '/tasks/onboarding')
+
+      //At Onboardig Tab, it is expected that the recently added task in the Onboarding of the newly created existing onboarding template appears
+      
+      //verify column names
+      const columnNames = [
+        'Task name', 
+        'Task Description', 
+        'Due Date',
+        'Assignees', 
+        'Action'
+      ];
+      cy.get('div.bg-white > div > p').each(($colname, index)=>{
+        cy.wrap($colname)
+          .should('exist')
+          .and('have.text', columnNames[index])
+          .and('have.css', 'color', 'rgb(148, 148, 148)') //text color
+        cy.log(columnNames[index])
+      });
+
+      //Now verify on row 1 divs that task should be and verify each columns
+      cy.get('div.bg-white > div.p-4:nth-child(2)').within(()=>{
+        //assert Column 1 > Task Name
+        ClientPageTaskTabTable.assertColumn1Taskname(' > div:nth-child(1)', 'Adding Existing task One')
+        //assert Column 2 > Task Description
+        ClientPageTaskTabTable.assertColumn2TaskDescription(' > div:nth-child(2) > p', 'This description is just for testing purposes only')
+        //assert Column 3 > Due Date
+        ClientPageTaskTabTable.assertColumn3DueDate(' > div:nth-child(3) > div > div > button')
+        //assert Column 4 > Assignees
+        ClientPageTaskTabTable.assertColumn4Assignees(' > div:nth-child(4) > div > div > div > button') 
+        //assert Column 5 > Action
+        ClientPageTaskTabTable.assertColumn5Action(' > div:nth-child(5) > button', 'Skip')
+      })
+
+    })
+    it("Testcase ID: CATM00012 - Add task to Existing Recurring Template",()=>{
+
+       //Login using account specialist
+       cy.userlogin(loginmodule.EmailAddressInputfield, loginmodule.PasswordInputfield, loginmodule.SigninButton, testdata.userAccounts[0].accountspecialist1, testdata.userAccounts[0].accountspecialistandprojectmanagerpassword)
+
+       //Click the Admin Navigation Module
+       cy.get(modulebutton.AdminModuleButton)
+         .click()
+         .wait(2000)
+         
+       //Click the Task Management link text folder
+       cy.get(linktextfolder.AdminModule[0].TaskManagement)
+         .click()
+         .wait(2000)
+         
+       //verify Add button - if found click
+       cy.get(adminmodulelocator.TaskManageementFolder[0].AddButton)
+         .should('exist')
+         .and('not.be.disabled')
+         .and('have.text', 'Add')
+         .and('have.css', 'color', 'rgb(0, 47, 93)') //text color
+         .and('have.css', 'border-color', 'rgb(0, 47, 93)')
+         .and('have.css', 'border-radius', '40px')
+         .click()
+         .wait(2000)
+ 
+       //verify Task List Creation Modal popup open
+       cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].modal)
+         .should('exist')
+ 
+       //Select Recurring Template
+       cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].RecurringTemplate)
+         .click()
+         .wait(1000)
+         .should('have.css', 'border-color', 'rgb(24, 121, 216)') // the entire recurring template has blue border color signify it is seleected
+         .find(' > div > div').should('have.css', 'background-color', 'rgb(24, 121, 216)') //blue dot signify it is selected
+     
+       //Click the Next Button
+       cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].NextButton)
+         .click()
+         .wait(2000)
+ 
+       //verify the Task List Creation Modal should remain open
+       cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].modal)
+         .should('exist')
+ 
+       //////// CREATE NEW RECURRING TASKS STARTS HERE ///////////
+ 
+       //Now Enter Template Name
+       cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].TemplateNameLabelandInputfield)
+         .find(' > input[name="name"]')
+         .clear()
+         .type('New Test Recurring Template')
+         .wait(600)
+         .should('have.value', 'New Test Recurring Template')
+ 
+       //Select New in Partner Type
+       cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].PartnerTypeLabelandDropdownMenu)
+         .find(' > div > select[name="partnerType"]')
+         .select('existing')
+         .wait(600)
+ 
+       //verify that the selected option goes on top
+       cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].PartnerTypeLabelandDropdownMenu)
+         .find('select option:selected')
+         .should('have.text', 'Existing')
+ 
+       //Select Service Category Full Account Management
+       cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].WhichServiceCategoryWIllThisBeUsedLabelandDropdownMenu)
+         .find(' > select[name="partnerService"]')
+         .select('Full Account Management')
+         .wait(600)
+ 
+       //verify the selected service category goes on top
+       cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].WhichServiceCategoryWIllThisBeUsedLabelandDropdownMenu)
+         .find('select option:selected')
+         .should('have.text', 'Full Account Management')
+ 
+       ///////// CREATE NEW RECURRING TASKS ENDS HERE ///////////
+        
+       //Click Create Button
+       cy.get(adminmodulelocator.TaskManageementFolder[0].TaskListCreationModal[0].CreateButton)
+         .click()
+         .wait(2000) 
+ 
+       //verify alert-success modal popup
+       cy.get('div.overflow-y-auto > div.min-h-full')
+         .should('exist')
+         .within(()=>{
+           //assert check logo
+           cy.get(' > div > div > svg')
+             .should('exist')
+             .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+           //assert message
+           cy.get(' > div > div')
+             .should('exist')
+             .and('have.text', 'Template has been created.')
+             .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+             .and('have.css', 'font-weight', '400')  //font bold
+         })
+ 
+       //then simulate pressing esc key in your keyboard
+       cy.get('body').type('{esc}');
+       cy.wait(3000)
+         
+       //Go to Existing Onboarding
+       //Verify Existing Tab if Found then click
+       cy.get(adminmodulelocator.TaskManageementFolder[0].pageTab[0].ExistingTab)
+         .should('exist')
+         .click()
+         .wait(3000)
+
+      //Go to New > Recurring Tab
+      //verify Recurring Tab and click when found
+      cy.get(adminmodulelocator.TaskManageementFolder[0].pageSubTab[0].RecurringTab)
+        .click()
+        .wait(3000)
+
+      //verify expected url destination
+      cy.url().should('contain', 'recurring')
+        
+       //////// TASK MANAGEMENT > NEW > RECURRING TABLE LIST ASSERTIONS STARTS HERE ////////////
+ 
+       cy.get('table > tbody > tr:first-child').within(()=>{
+         //assert Template Name
+         TaskManagementTableList.assertColumn1TemplateName(' > td:nth-child(1) > a', 'New Test Recurring Template')
+         //assert Partner Type
+         TaskManagementTableList.assertColumn2PartnerType(' > td:nth-child(2)', 'existing')
+         //assert Service Type
+         TaskManagementTableList.assertColumn3ServiceType(' > td:nth-child(3)', 'Full Account Management')
+         //assert Last Updated
+         TaskManagementTableList.assertColumn4LastUpdated(' > td:nth-child(4)', DateTodayIs.TodayDateMMDDYYYY_MonthisinWholeWordandDayiswithTH())
+         //assert Updated By
+         TaskManagementTableList.assertColumn5UpdatedBy(' > td:nth-child(5) > div', 'LP', 'Logan Paul')
+         //aasert Action:Edit
+         TaskManagementTableList.assertColumn6Action(' > td:nth-child(6) > a', 'not.be.disabled', 'Edit') 
+       }) 
+ 
+       //////// TASK MANAGEMENT > NEW > RECURRING TABLE LIST ASSERTIONS ENDS HERE ////////////
+         
+       //Click the Edit button
+       cy.get('table > tbody > tr:first-child > td:nth-child(6) > a')
+         .click()
+         .wait(3000)
+
+       /////////// SI-OPERATIONS ADD TASK STARTS HERE //////////////
+
+       //Click Add button next beside the Tasks
+       cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+         .find(' > button')
+         .click()
+         .wait(1000)
+
+       //Enter task Name for SI-Operation
+       cy.get('input[name="title"]')
+         .should('exist')
+         .clear()
+         .type('Adding new task Operation')
+         .wait(700)
+         .should('have.value', 'Adding new task Operation')
+
+       //Enter Task Description
+       cy.get('input[name="description"]')
+         .should('exist')
+         .clear()
+         .type('This description is just for testing purposes only')
+         .wait(700)
+         .should('have.value', 'This description is just for testing purposes only')
+
+       //Select SI-OPERATIONS IN THE DEPARTMENT drop down menu
+       cy.get('select[name="department"]')
+         .should('exist')
+         .select('SI-OPERATIONS')
+         .wait(700)
+
+       //Click the check/submit/save button
+       cy.get('div.grid > div > button:nth-child(1)')
+         .should('exist')
+         .click()
+         .wait(3000)
+
+       //verify alert-success modal popup
+       cy.get('div.overflow-y-auto > div.min-h-full')
+         .should('exist')
+         .within(()=>{
+           //assert check logo
+           cy.get(' > div > div > svg')
+             .should('exist')
+             .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+           //assert message
+           cy.get(' > div > div')
+             .should('exist')
+             .and('have.text', 'Template has been created.')
+             .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+             .and('have.css', 'font-weight', '400')  //font bold
+         })
+
+       //then simulate pressing esc key in your keyboard
+       cy.get('body').type('{esc}');
+       cy.wait(3000)
+
+       ////////// SI-OPERATIONS ADD TASK ENDS HERE //////////////// 
+
+       ////////// SI-PPC ADD TASK STARTS HERE ///////////////
+
+       //Click Add button next beside the Tasks
+       cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+         .find(' > button')
+         .click()
+         .wait(1000)
+
+       //Enter task Name for SI-PPC
+       cy.get('input[name="title"]')
+         .should('exist')
+         .clear()
+         .type('Adding new task PPC')
+         .wait(700)
+         .should('have.value', 'Adding new task PPC')
+
+       //Enter Task Description
+       cy.get('input[name="description"]')
+         .should('exist')
+         .clear()
+         .type('This description is just for testing purposes only')
+         .wait(700)
+         .should('have.value', 'This description is just for testing purposes only')
+
+       //Select SI-PPC IN THE DEPARTMENT drop down menu
+       cy.get('select[name="department"]')
+         .should('exist')
+         .select('SI-PPC')
+         .wait(700)
+
+       //Click the check/submit/save button
+       cy.get('div.grid > div > button:nth-child(1)')
+         .should('exist')
+         .click()
+         .wait(3000)
+
+       //verify alert-success modal popup
+       cy.get('div.overflow-y-auto > div.min-h-full')
+         .should('exist')
+         .within(()=>{
+           //assert check logo
+           cy.get(' > div > div > svg')
+             .should('exist')
+             .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+           //assert message
+           cy.get(' > div > div')
+             .should('exist')
+             .and('have.text', 'Template has been created.')
+             .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+             .and('have.css', 'font-weight', '400')  //font bold
+         })
+
+       //then simulate pressing esc key in your keyboard
+       cy.get('body').type('{esc}');
+       cy.wait(3000)
+
+       ////////// SI-PPC ADD TASK ENDS HERE ////////////////
+
+       ////////// SI-WRITING ADD TASK STARTS HERE ///////////////
+
+       //Click Add button next beside the Tasks
+       cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+         .find(' > button')
+         .click()
+         .wait(1000)
+
+       //Enter task Name for SI-PPC
+       cy.get('input[name="title"]')
+         .should('exist')
+         .clear()
+         .type('Adding new task SI-WRITING')
+         .wait(700)
+         .should('have.value', 'Adding new task SI-WRITING')
+
+       //Enter Task Description
+       cy.get('input[name="description"]')
+         .should('exist')
+         .clear()
+         .type('This description is just for testing purposes only')
+         .wait(700)
+         .should('have.value', 'This description is just for testing purposes only')
+
+       //Select SI-PPC IN THE DEPARTMENT drop down menu
+       cy.get('select[name="department"]')
+         .should('exist')
+         .select('SI-WRITING')
+         .wait(700)
+
+       //Click the check/submit/save button
+       cy.get('div.grid > div > button:nth-child(1)')
+         .should('exist')
+         .click()
+         .wait(3000)
+
+       //verify alert-success modal popup
+       cy.get('div.overflow-y-auto > div.min-h-full')
+         .should('exist')
+         .within(()=>{
+           //assert check logo
+           cy.get(' > div > div > svg')
+             .should('exist')
+             .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+           //assert message
+           cy.get(' > div > div')
+             .should('exist')
+             .and('have.text', 'Template has been created.')
+             .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+             .and('have.css', 'font-weight', '400')  //font bold
+         })
+
+       //then simulate pressing esc key in your keyboard
+       cy.get('body').type('{esc}');
+       cy.wait(3000)
+
+       ////////// SI-WRITING ADD TASK ENDS HERE ////////////////
+
+       ////////// SI-DESIGN ADD TASK STARTS HERE ///////////////
+
+       //Click Add button next beside the Tasks
+       cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+         .find(' > button')
+         .click()
+         .wait(1000)
+
+       //Enter task Name for SI-PPC
+       cy.get('input[name="title"]')
+         .should('exist')
+         .clear()
+         .type('Adding new task SI-DESIGN')
+         .wait(700)
+         .should('have.value', 'Adding new task SI-DESIGN')
+
+       //Enter Task Description
+       cy.get('input[name="description"]')
+         .should('exist')
+         .clear()
+         .type('This description is just for testing purposes only')
+         .wait(700)
+         .should('have.value', 'This description is just for testing purposes only')
+
+       //Select SI-PPC IN THE DEPARTMENT drop down menu
+       cy.get('select[name="department"]')
+         .should('exist')
+         .select('SI-DESIGN')
+         .wait(700)
+
+       //Click the check/submit/save button
+       cy.get('div.grid > div > button:nth-child(1)')
+         .should('exist')
+         .click()
+         .wait(3000)
+
+       //verify alert-success modal popup
+       cy.get('div.overflow-y-auto > div.min-h-full')
+         .should('exist')
+         .within(()=>{
+           //assert check logo
+           cy.get(' > div > div > svg')
+             .should('exist')
+             .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+           //assert message
+           cy.get(' > div > div')
+             .should('exist')
+             .and('have.text', 'Template has been created.')
+             .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+             .and('have.css', 'font-weight', '400')  //font bold
+         })
+
+       //then simulate pressing esc key in your keyboard
+       cy.get('body').type('{esc}');
+       cy.wait(3000)
+
+       ////////// SI-DESIGN ADD TASK ENDS HERE ////////////////
+
+       ////////// SI-ADMIN ADD TASK STARTS HERE ///////////////
+
+       //Click Add button next beside the Tasks
+       cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+         .find(' > button')
+         .click()
+         .wait(1000)
+
+       //Enter task Name for SI-PPC
+       cy.get('input[name="title"]')
+         .should('exist')
+         .clear()
+         .type('Adding new task SI-ADMIN')
+         .wait(700)
+         .should('have.value', 'Adding new task SI-ADMIN')
+
+       //Enter Task Description
+       cy.get('input[name="description"]')
+         .should('exist')
+         .clear()
+         .type('This description is just for testing purposes only')
+         .wait(700)
+         .should('have.value', 'This description is just for testing purposes only')
+
+       //Select SI-PPC IN THE DEPARTMENT drop down menu
+       cy.get('select[name="department"]')
+         .should('exist')
+         .select('SI-ADMIN')
+         .wait(700)
+
+       //Click the check/submit/save button
+       cy.get('div.grid > div > button:nth-child(1)')
+         .should('exist')
+         .click()
+         .wait(3000)
+
+       //verify alert-success modal popup
+       cy.get('div.overflow-y-auto > div.min-h-full')
+         .should('exist')
+         .within(()=>{
+           //assert check logo
+           cy.get(' > div > div > svg')
+             .should('exist')
+             .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+           //assert message
+           cy.get(' > div > div')
+             .should('exist')
+             .and('have.text', 'Template has been created.')
+             .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+             .and('have.css', 'font-weight', '400')  //font bold
+         })
+
+       //then simulate pressing esc key in your keyboard
+       cy.get('body').type('{esc}');
+       cy.wait(3000)
+
+       ////////// SI-ADMIN ADD TASK ENDS HERE ////////////////
+
+       ////////// BILLING ADD TASK STARTS HERE ///////////////
+
+       //Click Add button next beside the Tasks
+       cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+         .find(' > button')
+         .click()
+         .wait(1000)
+
+       //Enter task Name for SI-PPC
+       cy.get('input[name="title"]')
+         .should('exist')
+         .clear()
+         .type('Adding new task BILLING')
+         .wait(700)
+         .should('have.value', 'Adding new task BILLING')
+
+       //Enter Task Description
+       cy.get('input[name="description"]')
+         .should('exist')
+         .clear()
+         .type('This description is just for testing purposes only')
+         .wait(700)
+         .should('have.value', 'This description is just for testing purposes only')
+
+       //Select SI-PPC IN THE DEPARTMENT drop down menu
+       cy.get('select[name="department"]')
+         .should('exist')
+         .select('BILLING')
+         .wait(700)
+
+       //Click the check/submit/save button
+       cy.get('div.grid > div > button:nth-child(1)')
+         .should('exist')
+         .click()
+         .wait(3000)
+
+       //verify alert-success modal popup
+       cy.get('div.overflow-y-auto > div.min-h-full')
+         .should('exist')
+         .within(()=>{
+           //assert check logo
+           cy.get(' > div > div > svg')
+             .should('exist')
+             .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+           //assert message
+           cy.get(' > div > div')
+             .should('exist')
+             .and('have.text', 'Template has been created.')
+             .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+             .and('have.css', 'font-weight', '400')  //font bold
+         })
+
+       //then simulate pressing esc key in your keyboard
+       cy.get('body').type('{esc}');
+       cy.wait(3000)
+
+       ////////// BILLING ADD TASK ENDS HERE ////////////////
+
+       ////////// SALES ADD TASK STARTS HERE ///////////////
+        
+       //Click Add button next beside the Tasks
+       cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+         .find(' > button')
+         .click()
+         .wait(1000)
+
+       //Enter task Name for SI-PPC
+       cy.get('input[name="title"]')
+         .should('exist')
+         .clear()
+         .type('Adding new task SALES')
+         .wait(700)
+         .should('have.value', 'Adding new task SALES')
+
+       //Enter Task Description
+       cy.get('input[name="description"]')
+         .should('exist')
+         .clear()
+         .type('This description is just for testing purposes only')
+         .wait(700)
+         .should('have.value', 'This description is just for testing purposes only')
+
+       //Select SI-PPC IN THE DEPARTMENT drop down menu
+       cy.get('select[name="department"]')
+         .should('exist')
+         .select('SALES')
+         .wait(700)
+
+       //Click the check/submit/save button
+       cy.get('div.grid > div > button:nth-child(1)')
+         .should('exist')
+         .click()
+         .wait(3000)
+
+       //verify alert-success modal popup
+       cy.get('div.overflow-y-auto > div.min-h-full')
+         .should('exist')
+         .within(()=>{
+           //assert check logo
+           cy.get(' > div > div > svg')
+             .should('exist')
+             .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+           //assert message
+           cy.get(' > div > div')
+             .should('exist')
+             .and('have.text', 'Template has been created.')
+             .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+             .and('have.css', 'font-weight', '400')  //font bold
+         })
+
+       //then simulate pressing esc key in your keyboard
+       cy.get('body').type('{esc}');
+       cy.wait(3000)
+
+       ////////// SALES ADD TASK ENDS HERE ////////////////
+
+       ////////// LEAD GENERATION ADD TASK STARTS HERE ///////////////
+
+       //Click Add button next beside the Tasks
+       cy.get('div.main-content-inner2 > div > div.space-y-8 > div:nth-child(1)')
+         .find(' > button')
+         .click()
+         .wait(1000)
+
+       //Enter task Name for SI-PPC
+       cy.get('input[name="title"]')
+         .should('exist')
+         .clear()
+         .type('Adding new task LEAD GENERATION')
+         .wait(700)
+         .should('have.value', 'Adding new task LEAD GENERATION')
+
+       //Enter Task Description
+       cy.get('input[name="description"]')
+         .should('exist')
+         .clear()
+         .type('This description is just for testing purposes only')
+         .wait(700)
+         .should('have.value', 'This description is just for testing purposes only')
+
+       //Select SI-PPC IN THE DEPARTMENT drop down menu
+       cy.get('select[name="department"]')
+         .should('exist')
+         .select('LEAD_GENERATION')
+         .wait(700)
+
+       //Click the check/submit/save button
+       cy.get('div.grid > div > button:nth-child(1)')
+         .should('exist')
+         .click()
+         .wait(3000)
+
+       //verify alert-success modal popup
+       cy.get('div.overflow-y-auto > div.min-h-full')
+         .should('exist')
+         .within(()=>{
+           //assert check logo
+           cy.get(' > div > div > svg')
+             .should('exist')
+             .and('have.css', 'color', 'rgb(0, 150, 109)') //check color
+           //assert message
+           cy.get(' > div > div')
+             .should('exist')
+             .and('have.text', 'Template has been created.')
+             .and('have.css', 'color', 'rgb(0, 150, 109)') //text color
+             .and('have.css', 'font-weight', '400')  //font bold
+         })
+
+       //then simulate pressing esc key in your keyboard
+       cy.get('body').type('{esc}');
+       cy.wait(3000)
+
+       ////////// LEAD GENERATION ADD TASK ENDS HERE ////////////////
+
+       //Now go to Clients Module > Active Client
+       //Click Clients navigation module button
+       cy.get(modulebutton.ClientsModuleButton)
+         .click()
+         .wait(2000)
+      
+       //Then click then client name link text
+       cy.get('table > tbody > tr:first-child > td:nth-child(1) > a')
+         .click()
+         .wait(3000)
+      
+       //Click Task tab
+       cy.get(clientmodulelocator.ClientMainPageTab[0].TasksTab)
+         .should('exist')
+         .click()
+         .wait(2000)
+
+       //verify url expected destination
+       cy.url().should('contain', '/tasks/onboarding')
+
+      ////// VERIFY IN THE CLIENT > TASKS > OPERATIONS TAB STARTS HERE //////////////
+    
+      //Click the Operations tab
+      cy.get(clientmodulelocator.TasksTabPage[0].OperationsTab)
+        .should('exist')
+        .click()
+        .wait(2000)
+
+      //Now verify on row 1 divs that task should be and verify each columns
+      cy.get('div.bg-white > div.p-4:nth-child(2)').within(()=>{
+        //assert Column 1 > Task Name
+        ClientPageTaskTabTable.assertColumn1Taskname(' > div:nth-child(1)', 'Adding new task Operation')
+        //assert Column 2 > Task Description
+        ClientPageTaskTabTable.assertColumn2TaskDescription(' > div:nth-child(2) > p', 'This description is just for testing purposes only')
+        //assert Column 3 > Due Date
+        ClientPageTaskTabTable.assertColumn3DueDate(' > div:nth-child(3) > div > div > button')
+        //assert Column 4 > Assignees
+        ClientPageTaskTabTable.assertColumn4Assignees(' > div:nth-child(4) > div > div > div > button') 
+        //assert Column 5 > Action
+        ClientPageTaskTabTable.assertColumn5Action(' > div:nth-child(5) > button', 'Skip')
+      })
+
+     ////// VERIFY IN THE CLIENT > TASKS > OPERATIONS TAB ENDS HERE  //////////////
+
+     ////// VERIFY IN THE CLIENT > TASKS > WRITING TAB STARTS HERE //////////////
+    
+      //Click the Writing tab
+      cy.get(clientmodulelocator.TasksTabPage[0].WritingTab)
+        .should('exist')
+        .click()
+        .wait(2000)
+
+      //Now verify on row 1 divs that task should be and verify each columns
+      cy.get('div.bg-white > div.p-4:nth-child(2)').within(()=>{
+        //assert Column 1 > Task Name
+        ClientPageTaskTabTable.assertColumn1Taskname(' > div:nth-child(1)', 'Adding new task SI-WRITING')
+        //assert Column 2 > Task Description
+        ClientPageTaskTabTable.assertColumn2TaskDescription(' > div:nth-child(2) > p', 'This description is just for testing purposes only')
+        //assert Column 3 > Due Date
+        ClientPageTaskTabTable.assertColumn3DueDate(' > div:nth-child(3) > div > div > button')
+        //assert Column 4 > Assignees
+        ClientPageTaskTabTable.assertColumn4Assignees(' > div:nth-child(4) > div > div > div > button') 
+        //assert Column 5 > Action
+        ClientPageTaskTabTable.assertColumn5Action(' > div:nth-child(5) > button', 'Skip')
+      })
+
+     ////// VERIFY IN THE CLIENT > TASKS > WRITING TAB ENDS HERE  //////////////
+
+     ////// VERIFY IN THE CLIENT > TASKS > DESIGN TAB STARTS HERE //////////////
+    
+      //Click the Design tab
+      cy.get(clientmodulelocator.TasksTabPage[0].DesignTab)
+        .should('exist')
+        .click()
+        .wait(2000)
+
+      //Now verify on row 1 divs that task should be and verify each columns
+      cy.get('div.bg-white > div.p-4:nth-child(2)').within(()=>{
+        //assert Column 1 > Task Name
+        ClientPageTaskTabTable.assertColumn1Taskname(' > div:nth-child(1)', 'Adding new task SI-DESIGN')
+        //assert Column 2 > Task Description
+        ClientPageTaskTabTable.assertColumn2TaskDescription(' > div:nth-child(2) > p', 'This description is just for testing purposes only')
+        //assert Column 3 > Due Date
+        ClientPageTaskTabTable.assertColumn3DueDate(' > div:nth-child(3) > div > div > button')
+        //assert Column 4 > Assignees
+        ClientPageTaskTabTable.assertColumn4Assignees(' > div:nth-child(4) > div > div > div > button') 
+        //assert Column 5 > Action
+        ClientPageTaskTabTable.assertColumn5Action(' > div:nth-child(5) > button', 'Skip')
+      })
+
+     ////// VERIFY IN THE CLIENT > TASKS > DESIGN TAB ENDS HERE  //////////////
+
+     ////// VERIFY IN THE CLIENT > TASKS > PPC TAB STARTS HERE //////////////
+    
+      //Click the PPC tab
+      cy.get(clientmodulelocator.TasksTabPage[0].PPCTab)
+        .should('exist')
+        .click()
+        .wait(2000)
+
+      //Now verify on row 1 divs that task should be and verify each columns
+      cy.get('div.bg-white > div.p-4:nth-child(2)').within(()=>{
+        //assert Column 1 > Task Name
+        ClientPageTaskTabTable.assertColumn1Taskname(' > div:nth-child(1)', 'Adding new task SI-PPC')
+        //assert Column 2 > Task Description
+        ClientPageTaskTabTable.assertColumn2TaskDescription(' > div:nth-child(2) > p', 'This description is just for testing purposes only')
+        //assert Column 3 > Due Date
+        ClientPageTaskTabTable.assertColumn3DueDate(' > div:nth-child(3) > div > div > button')
+        //assert Column 4 > Assignees
+        ClientPageTaskTabTable.assertColumn4Assignees(' > div:nth-child(4) > div > div > div > button') 
+        //assert Column 5 > Action
+        ClientPageTaskTabTable.assertColumn5Action(' > div:nth-child(5) > button', 'Skip')
+      })
+
+     ////// VERIFY IN THE CLIENT > TASKS > PPC TAB ENDS HERE  //////////////
+
+     ////// VERIFY IN THE CLIENT > TASKS > BILLING TAB STARTS HERE //////////////
+    
+      //Click the BILLING tab
+      cy.get(clientmodulelocator.TasksTabPage[0].BillingTab)
+        .should('exist')
+        .click()
+        .wait(2000)
+
+      //Now verify on row 1 divs that task should be and verify each columns
+      cy.get('div.bg-white > div.p-4:nth-child(2)').within(()=>{
+        //assert Column 1 > Task Name
+        ClientPageTaskTabTable.assertColumn1Taskname(' > div:nth-child(1)', 'Adding new task BILLING')
+        //assert Column 2 > Task Description
+        ClientPageTaskTabTable.assertColumn2TaskDescription(' > div:nth-child(2) > p', 'This description is just for testing purposes only')
+        //assert Column 3 > Due Date
+        ClientPageTaskTabTable.assertColumn3DueDate(' > div:nth-child(3) > div > div > button')
+        //assert Column 4 > Assignees
+        ClientPageTaskTabTable.assertColumn4Assignees(' > div:nth-child(4) > div > div > div > button') 
+        //assert Column 5 > Action
+        ClientPageTaskTabTable.assertColumn5Action(' > div:nth-child(5) > button', 'Skip')
+      })
+
+     ////// VERIFY IN THE CLIENT > TASKS > BILLING TAB ENDS HERE  //////////////
+
+     ////// VERIFY IN THE CLIENT > TASKS > SALES TAB STARTS HERE //////////////
+    
+      //Click the SALES tab
+      cy.get(clientmodulelocator.TasksTabPage[0].SalesTab)
+        .should('exist')
+        .click()
+        .wait(2000)
+
+      //Now verify on row 1 divs that task should be and verify each columns
+      cy.get('div.bg-white > div.p-4:nth-child(2)').within(()=>{
+        //assert Column 1 > Task Name
+        ClientPageTaskTabTable.assertColumn1Taskname(' > div:nth-child(1)', 'Adding new task SALES')
+        //assert Column 2 > Task Description
+        ClientPageTaskTabTable.assertColumn2TaskDescription(' > div:nth-child(2) > p', 'This description is just for testing purposes only')
+        //assert Column 3 > Due Date
+        ClientPageTaskTabTable.assertColumn3DueDate(' > div:nth-child(3) > div > div > button')
+        //assert Column 4 > Assignees
+        ClientPageTaskTabTable.assertColumn4Assignees(' > div:nth-child(4) > div > div > div > button') 
+        //assert Column 5 > Action
+        ClientPageTaskTabTable.assertColumn5Action(' > div:nth-child(5) > button', 'Skip')
+      })
+
+     ////// VERIFY IN THE CLIENT > TASKS > SALES TAB ENDS HERE  //////////////
+
+     ////// VERIFY IN THE CLIENT > TASKS > LEADS TAB STARTS HERE //////////////
+    
+      //Click the LEADS tab
+      cy.get(clientmodulelocator.TasksTabPage[0].LeadsTab)
+        .should('exist')
+        .click()
+        .wait(2000)
+
+      //Now verify on row 1 divs that task should be and verify each columns
+      cy.get('div.bg-white > div.p-4:nth-child(2)').within(()=>{
+        //assert Column 1 > Task Name
+        ClientPageTaskTabTable.assertColumn1Taskname(' > div:nth-child(1)', 'Adding new task LEAD GENERATION')
+        //assert Column 2 > Task Description
+        ClientPageTaskTabTable.assertColumn2TaskDescription(' > div:nth-child(2) > p', 'This description is just for testing purposes only')
+        //assert Column 3 > Due Date
+        ClientPageTaskTabTable.assertColumn3DueDate(' > div:nth-child(3) > div > div > button')
+        //assert Column 4 > Assignees
+        ClientPageTaskTabTable.assertColumn4Assignees(' > div:nth-child(4) > div > div > div > button') 
+        //assert Column 5 > Action
+        ClientPageTaskTabTable.assertColumn5Action(' > div:nth-child(5) > button', 'Skip')
+      })
+
+     ////// VERIFY IN THE CLIENT > TASKS > LEADS TAB ENDS HERE  //////////////
+
+     ////// VERIFY IN THE CLIENT > TASKS > ADMIN TAB STARTS HERE //////////////
+    
+      //Click the ADMIN tab
+      cy.get(clientmodulelocator.TasksTabPage[0].AdminTab)
+        .should('exist')
+        .click()
+        .wait(2000)
+
+      //Now verify on row 1 divs that task should be and verify each columns
+      cy.get('div.bg-white > div.p-4:nth-child(2)').within(()=>{
+        //assert Column 1 > Task Name
+        ClientPageTaskTabTable.assertColumn1Taskname(' > div:nth-child(1)', 'Adding new task SI-ADMIN')
+        //assert Column 2 > Task Description
+        ClientPageTaskTabTable.assertColumn2TaskDescription(' > div:nth-child(2) > p', 'This description is just for testing purposes only')
+        //assert Column 3 > Due Date
+        ClientPageTaskTabTable.assertColumn3DueDate(' > div:nth-child(3) > div > div > button')
+        //assert Column 4 > Assignees
+        ClientPageTaskTabTable.assertColumn4Assignees(' > div:nth-child(4) > div > div > div > button') 
+        //assert Column 5 > Action
+        ClientPageTaskTabTable.assertColumn5Action(' > div:nth-child(5) > button', 'Skip')
+      })
+
+     ////// VERIFY IN THE CLIENT > TASKS > ADMIN TAB ENDS HERE  //////////////
 
     })
 

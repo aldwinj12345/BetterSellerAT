@@ -99,6 +99,17 @@
                         }
                     ]
                 }
+            ],
+            "OnboardingTabpage":[
+                {
+                    "":""
+                }
+
+            ],
+            "FilesTabpage":[
+                {
+                    "pageTitle":"div.client-content > div > div > h4"
+                }
             ]
         }
     ],
@@ -246,6 +257,19 @@
                 }
                 
             ]   
+        }
+    ],
+    "TasksTabPage":[
+        {
+            "OnboardingTab":"div.tabnav > a:nth-child(1)",
+            "OperationsTab":"div.tabnav > a:nth-child(2)",
+            "WritingTab":"div.tabnav > a:nth-child(3)",
+            "DesignTab":"div.tabnav > a:nth-child(4)",
+            "PPCTab":"div.tabnav > a:nth-child(5)",
+            "BillingTab":"div.tabnav > a:nth-child(6)",
+            "SalesTab":"div.tabnav > a:nth-child(7)",
+            "LeadsTab":"div.tabnav > a:nth-child(8)",
+            "AdminTab":"div.tabnav > a:nth-child(9)"
         }
     ]
 }
