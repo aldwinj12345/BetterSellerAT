@@ -2007,7 +2007,7 @@ describe('Login Module Test Suite',()=>{
             .and('have.value', '6.8') //default value
         })
 
-      //verify Estimate Completion Date* label and Input field
+      //verify Estimate Completion Date label and Input field
       cy.get(clientmodulelocator.BillingTabPage[0].UpsellsTabpage[0].CreateUpsellModal[0].EstimateCompletionDateLabelandInputfield)
         .should('exist')
         .and('not.be.disabled')
@@ -2015,8 +2015,7 @@ describe('Login Module Test Suite',()=>{
           //assert label
           cy.get('label')
             .should('exist')
-            .and('have.text', 'Estimate Completion Date*')
-            .find('span').should('have.css', 'color', 'rgb(237, 46, 46)') //asterisk color
+            .and('have.text', 'Estimate Completion Date')
           //assert input field
           cy.get('input[name="details.completionDate"]')
             .should('exist')
@@ -2167,16 +2166,7 @@ describe('Login Module Test Suite',()=>{
               expect(defaultText).to.contain('$ 0.00')
             })
         })
-
-      //Now I will set date of Estimated Completion
-      cy.get(clientmodulelocator.BillingTabPage[0].UpsellsTabpage[0].CreateUpsellModal[0].EstimateCompletionDateLabelandInputfield)
-        .scrollIntoView()
-        .find('input[name="details.completionDate"]')
-        .clear()
-        .type(DateTodayIs.TodayDateYYYYMMDDWithDashandAddZeroIfNeeded())
-        .wait(1000)
-        .should('have.value', DateTodayIs.TodayDateYYYYMMDDWithDashandAddZeroIfNeeded())
-
+      
       //Enter Quantity
       cy.get(clientmodulelocator.BillingTabPage[0].UpsellsTabpage[0].CreateUpsellModal[0].PaidReviewProgramQuantityLabelandInputfield)
         .find('input[name="serviceAsins.0.qty"]')
